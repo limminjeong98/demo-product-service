@@ -151,6 +151,29 @@ public class ProductRepositoryStub implements ProductRepository {
                 new Product(productIdGenerator.getAndIncrement(), categories.get(ACCESSORY), brandI, 2400L));
     }
 
+    public void addTestData(Product product) {
+        products.add(
+                new Product(
+                        productIdGenerator.getAndIncrement(),
+                        categories.get(product.getCategory().getCategoryType()),
+                        brands.get(product.getBrand().getBrandName()),
+                        product.getPrice()));
+    }
+
+
+    @Override
+    public Product findTopByBrandAndCategoryOrderByPriceAsc(Brand brand, Category category) {
+        Category.CategoryType categoryType = category.getCategoryType();
+        String brandName = brand.getBrandName();
+        return products.stream()
+                .filter(
+                        product ->
+                                categoryType.equals(product.getCategory().getCategoryType())
+                                        && brandName.equals(product.getBrand().getBrandName()))
+                .min(Comparator.comparingLong(Product::getPrice))
+                .orElse(null);
+    }
+
     @Override
     public Product findTopByCategoryOrderByPriceAsc(Category category) {
         Category.CategoryType categoryType = category.getCategoryType();
