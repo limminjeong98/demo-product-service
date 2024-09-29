@@ -46,8 +46,8 @@ class ProductServiceTest {
 
             // then
             assertNotNull(result);
-            assertEquals(result.getPrice(), 10000L);
-            assertEquals(result.getBrand().getBrandName(), "C");
+            assertEquals(10000L, result.getPrice());
+            assertEquals("C", result.getBrand().getBrandName());
             verify(productRepository).findTopByCategoryOrderByPriceAsc(category);
         }
 
@@ -86,8 +86,8 @@ class ProductServiceTest {
 
             // then
             assertNotNull(result);
-            assertEquals(result.getPrice(), 3800L);
-            assertEquals(result.getBrand().getBrandName(), "E");
+            assertEquals(3800L, result.getPrice());
+            assertEquals("E", result.getBrand().getBrandName());
             verify(productRepository).findTopByBrandAndCategoryOrderByPriceAsc(brand, category);
         }
 
