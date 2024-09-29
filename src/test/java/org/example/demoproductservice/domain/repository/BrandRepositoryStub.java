@@ -16,7 +16,7 @@ import java.util.function.Function;
 
 public class BrandRepositoryStub implements BrandRepository {
 
-    private final Map<String, Brand> brands = new HashMap<>();
+    private final Map<Long, Brand> brands = new HashMap<>();
     private final AtomicLong brandIdGenerator = new AtomicLong(1);
 
     public void prepareTestData() {
@@ -25,7 +25,7 @@ public class BrandRepositoryStub implements BrandRepository {
         for (int i = 0; i < 9; i++) {
             String brandName = String.valueOf((char) (asciiCodeOfA + i));
             Brand brand = new Brand(brandIdGenerator.getAndIncrement(), brandName, null);
-            brands.put(brandName, brand);
+            brands.put(brand.getId(), brand);
         }
     }
 
@@ -38,6 +38,31 @@ public class BrandRepositoryStub implements BrandRepository {
     @Override
     public void deleteAll() {
         brands.clear();
+    }
+
+    @Override
+    public <S extends Brand> S save(S entity) {
+        // id
+        Long id = entity.getId();
+        if (id == null) {
+            id = brandIdGenerator.getAndIncrement();
+            Brand brand = new Brand(id, entity.getBrandName());
+            brands.put(id, brand);
+        } else if (brands.get(entity.getId()) != null) {
+            brands.put(id, entity);
+        } else {
+            return null;
+        }
+        return (S) brands.get(id);
+    }
+
+    @Override
+    public Optional<Brand> findById(Long aLong) {
+        Brand brand = brands.get(aLong);
+        if (brand == null) {
+            return Optional.empty();
+        }
+        return Optional.of(brand);
     }
 
     /**
@@ -123,20 +148,12 @@ public class BrandRepositoryStub implements BrandRepository {
         return null;
     }
 
-    @Override
-    public <S extends Brand> S save(S entity) {
-        return null;
-    }
 
     @Override
     public <S extends Brand> List<S> saveAll(Iterable<S> entities) {
         return List.of();
     }
 
-    @Override
-    public Optional<Brand> findById(Long aLong) {
-        return Optional.empty();
-    }
 
     @Override
     public boolean existsById(Long aLong) {
