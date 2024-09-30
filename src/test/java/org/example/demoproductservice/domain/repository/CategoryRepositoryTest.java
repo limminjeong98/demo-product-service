@@ -10,8 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("local")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -34,5 +33,19 @@ class CategoryRepositoryTest {
         // then
         assertFalse(result.isEmpty());
         assertEquals(8, result.size());
+    }
+
+    @DisplayName("카테고리 타입으로 카테고리를 조회한다")
+    @Test
+    void testFindByCategoryType() {
+        // given
+        Category.CategoryType categoryType = Category.CategoryType.ACCESSORY;
+
+        // when
+        Category result = sut.findByCategoryType(categoryType);
+
+        // then
+        assertNotNull(result);
+        assertEquals(categoryType, result.getCategoryType());
     }
 }
