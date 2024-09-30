@@ -20,4 +20,9 @@ public class CategoryService {
     public List<Category> findAll() {
         return categoryRepository.findAll();
     }
+
+    @Transactional(readOnly = true)
+    public Category findByCategoryType(String categoryType) {
+        return categoryRepository.findByCategoryType(Category.CategoryType.valueOf(categoryType));
+    }
 }
