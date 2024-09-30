@@ -12,11 +12,11 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BrandServiceTest {
@@ -58,6 +58,36 @@ class BrandServiceTest {
             assertNotNull(result);
             assertTrue(result.isEmpty());
             verify(brandRepository).findAll();
+        }
+    }
+
+    @DisplayName("브랜드를 조회한다")
+    @Nested
+    class FindBrandById {
+        @DisplayName("저장된 브랜드를 조회한다")
+        @Test
+        void testFindBrandByIdSuccess() {
+            // given
+            brandRepository.prepareTestData();
+            Long id = 1L;
+
+            // when
+            Brand result = sut.findById(id);
+
+            // then
+            assertNotNull(result);
+            assertEquals(id, result.getId());
+            verify(brandRepository).findById(id);
+        }
+
+        @DisplayName("조회한 id에 해당하는 브랜드를 없다면 예외가 발생한다")
+        @Test
+        void testFindBrandByIdFail() {
+            // given
+            Long id = 1L;
+
+            // when & then
+            assertThrows(BrandNotFoundException.class, () -> sut.findById(id));
         }
     }
 
@@ -116,6 +146,39 @@ class BrandServiceTest {
             // when & then
             assertThrows(BrandNotFoundException.class, () -> sut.update(id, "브랜드 이름"));
             verify(brandRepository, never()).save(any());
+        }
+    }
+
+    @DisplayName("브랜드를 삭제한다")
+    @Nested
+    class DeleteBrandById {
+        @DisplayName("저장된 브랜드를 삭제한다")
+        @Test
+        void testDeleteBrandByIdSuccess() {
+            // given
+            brandRepository.prepareTestData();
+            Long id = 1L;
+
+            // when
+            sut.delete(id);
+
+            // then
+            Optional<Brand> result = brandRepository.findById(id);
+            assertTrue(result.isEmpty());
+            verify(brandRepository, atLeastOnce()).findById(id);
+            verify(brandRepository).deleteById(id);
+        }
+
+        @DisplayName("삭제하려는 브랜드 id에 해당하는 브랜드가 없다면 예외가 발생한다")
+        @Test
+        void testDeleteBrandByIdFail() {
+            // given
+            Long id = 1L;
+
+            // when & then
+            assertThrows(BrandNotFoundException.class, () -> sut.delete(id));
+            verify(brandRepository).findById(id);
+            verify(brandRepository, never()).deleteById(id);
         }
     }
 }
