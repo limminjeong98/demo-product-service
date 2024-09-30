@@ -216,6 +216,21 @@ public class ProductRepositoryStub implements ProductRepository {
         products.removeIf(product -> product.getId().equals(aLong));
     }
 
+    @Override
+    public <S extends Product> S save(S entity) {
+        final Long id = entity.getId();
+        if (id == null) {
+            Product product = new Product(productIdGenerator.getAndIncrement(), entity.getCategory(), entity.getBrand(), entity.getPrice());
+            products.add(product);
+            return entity;
+        }
+
+        Product product = products.stream().filter(p -> p.getId().equals(id)).findFirst().orElse(null);
+        if (product == null) return null;
+        products.remove(product);
+        products.add(entity);
+        return entity;
+    }
 
     /**
      * 이하 메서드는 미구현
@@ -290,11 +305,6 @@ public class ProductRepositoryStub implements ProductRepository {
     @Override
     public <S extends Product, R> R findBy(
             Example<S> example, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
-        return null;
-    }
-
-    @Override
-    public <S extends Product> S save(S entity) {
         return null;
     }
 

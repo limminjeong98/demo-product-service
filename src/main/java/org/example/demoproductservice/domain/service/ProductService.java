@@ -40,4 +40,24 @@ public class ProductService {
         if (product == null) throw new ProductNotFoundException();
         return product;
     }
+
+    @Transactional(readOnly = true)
+    public Product findById(Long id) {
+        return productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
+    }
+
+    public Product register(Category category, Brand brand, Long price) {
+        // 신규 등록일 경우 id는 null
+        return productRepository.save(new Product(null, category, brand, price));
+    }
+
+    public Product update(Long id, Category category,  Brand brand, Long price) {
+        Product product = productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
+        return productRepository.save(new Product(id, category, brand, price));
+    }
+
+    public void delete(Long id) {
+        Product product = productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
+        productRepository.deleteById(id);
+    }
 }
