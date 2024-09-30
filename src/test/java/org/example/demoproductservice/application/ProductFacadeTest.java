@@ -246,4 +246,37 @@ class ProductFacadeTest {
             assertThrows(BrandNotFoundException.class, () -> sut.getLowestPriceBrandProductSet());
         }
     }
+
+    @DisplayName("카테고리별 최저, 최고 가격 상품 정보를 조회한다")
+    @Nested
+    class GetLowestAndHighestPriceProductByCategory {
+        @DisplayName("카테고리에서 가격이 가장 낮은 상품과 높은 상품의 브랜드와 가격을 반환하는지 검증한다")
+        @Test
+        void test1() {
+            // given
+            // 테스트 데이터 세팅
+            brandRepository.prepareTestData();
+            categoryRepository.prepareTestData();
+            productRepository.prepareTestData();
+
+            String categoryType = "TOP";
+            Category category = categoryRepository.findByCategoryType(Category.CategoryType.valueOf(categoryType));
+            given(categoryService.findByCategoryType(category.getCategoryType().name())).willReturn(category);
+            Product lowestProduct = productRepository.findTopByCategoryOrderByPriceAsc(category);
+            given(productService.findLowestPriceProductByCategory(category)).willReturn(lowestProduct);
+            Product highestProduct = productRepository.findTopByCategoryOrderByPriceDesc(category);
+            given(productService.findHighestPriceProductByCategory(category)).willReturn(highestProduct);
+
+            // when
+            CategoryProductSet result = sut.getLowestAndHighestPriceProductByCategory(categoryType);
+
+            // then
+            assertNotNull(result);
+            assertEquals("TOP", result.categoryType());
+            assertEquals("I", result.highestPriceProduct().brandName());
+            assertEquals(11400L, result.highestPriceProduct().price());
+            assertEquals("C", result.lowestPriceProduct().brandName());
+            assertEquals(10000L, result.lowestPriceProduct().price());
+        }
+    }
 }

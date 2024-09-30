@@ -83,4 +83,27 @@ public class ProductFacade {
         return brandCoordSetMap.values().stream().sorted(Comparator.comparing(BrandCoordSet::getTotalPrice)).findFirst().orElseThrow(RuntimeException::new);
     }
 
+    /**
+     * 카테고리별 최저, 최고 가격 상품 정보(카테고리, 브랜드, 상품 가격)를 반환
+     */
+    public CategoryProductSet getLowestAndHighestPriceProductByCategory(String categoryType) {
+        // FIXME: 에러 메시지 정의
+        Category category = categoryService.findByCategoryType(categoryType);
+        if (category == null) return null;
+
+        Product lowestPriceProduct;
+        Product highestPriceProduct;
+        try {
+            lowestPriceProduct = productService.findLowestPriceProductByCategory(category);
+            highestPriceProduct = productService.findHighestPriceProductByCategory(category);
+        } catch (ProductNotFoundException e) {
+            // FIXME: 예외 케이스 정의
+            return null;
+        }
+
+        return new CategoryProductSet(category.getCategoryType().name(),
+                new CategoryProductItem(lowestPriceProduct.getBrand().getBrandName(), lowestPriceProduct.getPrice()),
+                new CategoryProductItem(highestPriceProduct.getBrand().getBrandName(), highestPriceProduct.getPrice())
+        );
+    }
 }
