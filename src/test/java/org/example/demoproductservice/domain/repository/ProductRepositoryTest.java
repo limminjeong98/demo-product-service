@@ -10,8 +10,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.example.demoproductservice.domain.repository.entity.Category.CategoryType.BAG;
-import static org.example.demoproductservice.domain.repository.entity.Category.CategoryType.BOTTOM;
+import static org.example.demoproductservice.domain.repository.entity.Category.CategoryType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -38,6 +37,23 @@ class ProductRepositoryTest {
         assertEquals(BAG, result.getCategory().getCategoryType());
         assertEquals(5L, result.getId());
         assertEquals(2000, result.getPrice());
+    }
+
+    @DisplayName("특정 카테고리에서 가격이 가장 높은 상품을 조회한다")
+    @Test
+    void testFindTopByCategoryOrderByPriceDesc() {
+        // given
+        // TOP (id: 1) 카테고리
+        Category category = new Category(1L, TOP, null);
+
+        // when
+        Product result = sut.findTopByCategoryOrderByPriceDesc(category);
+
+        // then
+        assertNotNull(result);
+        assertEquals(TOP, result.getCategory().getCategoryType());
+        assertEquals(65L, result.getId());
+        assertEquals(11400, result.getPrice());
     }
 
     @DisplayName("특정 브랜드의 카테고리에서 가격이 가장 낮은 상품을 조회한다")
