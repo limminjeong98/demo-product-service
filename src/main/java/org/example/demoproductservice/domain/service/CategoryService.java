@@ -20,4 +20,16 @@ public class CategoryService {
     public List<Category> findAll() {
         return categoryRepository.findAll();
     }
+
+    @Transactional(readOnly = true)
+    public Category findByCategoryType(String categoryType) {
+        Category.CategoryType type;
+        try {
+            type = Category.CategoryType.valueOf(categoryType);
+        } catch (IllegalArgumentException e) {
+            // CategoryType enum에 정의되지 않은 카테고리를 조회한 경우
+            return null;
+        }
+        return categoryRepository.findByCategoryType(type);
+    }
 }

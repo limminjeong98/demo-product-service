@@ -12,7 +12,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+import static org.example.demoproductservice.domain.repository.entity.Category.CategoryType.TOP;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,4 +60,38 @@ class CategoryServiceTest {
         }
     }
 
+    @DisplayName("카테고리 타입으로 카테고리를 조회한다")
+    @Nested
+    class findByCategoryType {
+        @DisplayName("존재하는 카테고리 타입이면 카테고리를 반환한다")
+        @Test
+        void testSuccess() {
+            // given
+            categoryRepository.prepareTestData();
+            String categoryType = "TOP";
+
+            // when
+            Category result = sut.findByCategoryType(categoryType);
+
+            // then
+            assertNotNull(result);
+            assertEquals(TOP, result.getCategoryType());
+            verify(categoryRepository).findByCategoryType(TOP);
+        }
+
+        @DisplayName("존재하지 않는 카테고리 타입이면 null을 반환한다")
+        @Test
+        void testFail() {
+            // given
+            categoryRepository.prepareTestData();
+            String categoryType = "INVALID_CATEGORY_TYPE";
+
+            // when
+            Category result = sut.findByCategoryType(categoryType);
+
+            // then
+            assertNull(result);
+            verify(categoryRepository, never()).findByCategoryType(any());
+        }
+    }
 }

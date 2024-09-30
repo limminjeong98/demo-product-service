@@ -38,6 +38,12 @@ public class CategoryRepositoryStub implements CategoryRepository {
     }
 
     @Override
+    public Category findByCategoryType(Category.CategoryType categoryType) {
+        return categories.get(categoryType);
+    }
+
+    /** 이하 미구현 **/
+    @Override
     public void flush() {
 
     }
@@ -177,4 +183,6 @@ public class CategoryRepositoryStub implements CategoryRepository {
     public Page<Category> findAll(Pageable pageable) {
         return null;
     }
+
+
 }
