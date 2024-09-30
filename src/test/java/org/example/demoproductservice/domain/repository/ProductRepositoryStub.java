@@ -43,6 +43,7 @@ public class ProductRepositoryStub implements ProductRepository {
         }
 
         // A 브랜드 상품 등록
+        // 상품 총액 37,700
         Brand brandA = brands.get("A");
         products.add(new Product(productIdGenerator.getAndIncrement(), categories.get(TOP), brandA, 11200L));
         products.add(new Product(productIdGenerator.getAndIncrement(), categories.get(OUTER), brandA, 5500L));
@@ -55,6 +56,7 @@ public class ProductRepositoryStub implements ProductRepository {
                 new Product(productIdGenerator.getAndIncrement(), categories.get(ACCESSORY), brandA, 2300L));
 
         // B 브랜드 상품 등록
+        // 상품 총액 37,600
         Brand brandB = brands.get("B");
         products.add(new Product(productIdGenerator.getAndIncrement(), categories.get(TOP), brandB, 10500L));
         products.add(new Product(productIdGenerator.getAndIncrement(), categories.get(OUTER), brandB, 5900L));
@@ -67,6 +69,7 @@ public class ProductRepositoryStub implements ProductRepository {
                 new Product(productIdGenerator.getAndIncrement(), categories.get(ACCESSORY), brandB, 2200L));
 
         // C 브랜드 상품 등록
+        // 상품 총액 37,100
         Brand brandC = brands.get("C");
         products.add(new Product(productIdGenerator.getAndIncrement(), categories.get(TOP), brandC, 10000L));
         products.add(new Product(productIdGenerator.getAndIncrement(), categories.get(OUTER), brandC, 6200L));
@@ -79,6 +82,7 @@ public class ProductRepositoryStub implements ProductRepository {
                 new Product(productIdGenerator.getAndIncrement(), categories.get(ACCESSORY), brandC, 2100L));
 
         // D 브랜드 상품 등록
+        // 상품 총액 36,100
         Brand brandD = brands.get("D");
         products.add(new Product(productIdGenerator.getAndIncrement(), categories.get(TOP), brandD, 10100L));
         products.add(new Product(productIdGenerator.getAndIncrement(), categories.get(OUTER), brandD, 5100L));
@@ -91,6 +95,7 @@ public class ProductRepositoryStub implements ProductRepository {
                 new Product(productIdGenerator.getAndIncrement(), categories.get(ACCESSORY), brandD, 2000L));
 
         // E 브랜드 상품 등록
+        // 상품 총액 37,700
         Brand brandE = brands.get("E");
         products.add(new Product(productIdGenerator.getAndIncrement(), categories.get(TOP), brandE, 10700L));
         products.add(new Product(productIdGenerator.getAndIncrement(), categories.get(OUTER), brandE, 5000L));
@@ -103,6 +108,7 @@ public class ProductRepositoryStub implements ProductRepository {
                 new Product(productIdGenerator.getAndIncrement(), categories.get(ACCESSORY), brandE, 2100L));
 
         // F 브랜드 상품 등록
+        // 상품 총액 37,300
         Brand brandF = brands.get("F");
         products.add(new Product(productIdGenerator.getAndIncrement(), categories.get(TOP), brandF, 11200L));
         products.add(new Product(productIdGenerator.getAndIncrement(), categories.get(OUTER), brandF, 7200L));
@@ -115,6 +121,7 @@ public class ProductRepositoryStub implements ProductRepository {
                 new Product(productIdGenerator.getAndIncrement(), categories.get(ACCESSORY), brandF, 1900L));
 
         // G 브랜드 상품 등록
+        // 상품 총액 37,200
         Brand brandG = brands.get("G");
         products.add(new Product(productIdGenerator.getAndIncrement(), categories.get(TOP), brandG, 10500L));
         products.add(new Product(productIdGenerator.getAndIncrement(), categories.get(OUTER), brandG, 5800L));
@@ -127,6 +134,7 @@ public class ProductRepositoryStub implements ProductRepository {
                 new Product(productIdGenerator.getAndIncrement(), categories.get(ACCESSORY), brandG, 2000L));
 
         // H 브랜드 상품 등록
+        // 상품 총액 37,600
         Brand brandH = brands.get("H");
         products.add(new Product(productIdGenerator.getAndIncrement(), categories.get(TOP), brandH, 10800L));
         products.add(new Product(productIdGenerator.getAndIncrement(), categories.get(OUTER), brandH, 6300L));
@@ -139,6 +147,7 @@ public class ProductRepositoryStub implements ProductRepository {
                 new Product(productIdGenerator.getAndIncrement(), categories.get(ACCESSORY), brandH, 2000L));
 
         // I 브랜드 상품 등록
+        // 상품 총액 39,000
         Brand brandI = brands.get("I");
         products.add(new Product(productIdGenerator.getAndIncrement(), categories.get(TOP), brandI, 11400L));
         products.add(new Product(productIdGenerator.getAndIncrement(), categories.get(OUTER), brandI, 6700L));
@@ -187,6 +196,17 @@ public class ProductRepositoryStub implements ProductRepository {
     public void deleteAll() {
         products.clear();
     }
+
+    @Override
+    public Optional<Product> findById(Long aLong) {
+        return products.stream().filter(p -> p.getId().equals(aLong)).findFirst();
+    }
+
+    @Override
+    public void deleteById(Long aLong) {
+        products.removeIf(product -> product.getId().equals(aLong));
+    }
+
 
     /**
      * 이하 메서드는 미구현
@@ -274,10 +294,6 @@ public class ProductRepositoryStub implements ProductRepository {
         return List.of();
     }
 
-    @Override
-    public Optional<Product> findById(Long aLong) {
-        return Optional.empty();
-    }
 
     @Override
     public boolean existsById(Long aLong) {
@@ -299,9 +315,6 @@ public class ProductRepositoryStub implements ProductRepository {
         return 0;
     }
 
-    @Override
-    public void deleteById(Long aLong) {
-    }
 
     @Override
     public void delete(Product entity) {
