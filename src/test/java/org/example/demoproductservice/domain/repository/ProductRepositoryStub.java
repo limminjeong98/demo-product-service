@@ -193,6 +193,15 @@ public class ProductRepositoryStub implements ProductRepository {
     }
 
     @Override
+    public Product findTopByCategoryOrderByPriceDesc(Category category) {
+        Category.CategoryType categoryType = category.getCategoryType();
+        return products.stream()
+                .filter(product -> categoryType.equals(product.getCategory().getCategoryType()))
+                .max(Comparator.comparingLong(Product::getPrice))
+                .orElse(null);
+    }
+
+    @Override
     public void deleteAll() {
         products.clear();
     }
