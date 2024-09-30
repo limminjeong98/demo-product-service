@@ -65,6 +65,11 @@ public class BrandRepositoryStub implements BrandRepository {
         return Optional.of(brand);
     }
 
+    @Override
+    public void deleteById(Long aLong) {
+        brands.remove(aLong);
+    }
+
     /**
      * 이하 메서드는 미구현
      */
@@ -169,11 +174,6 @@ public class BrandRepositoryStub implements BrandRepository {
     @Override
     public long count() {
         return 0;
-    }
-
-    @Override
-    public void deleteById(Long aLong) {
-
     }
 
     @Override
