@@ -1,0 +1,19 @@
+package org.example.demoproductservice.common.controller;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import org.example.demoproductservice.interfaces.consts.ErrorCode;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
+@JsonInclude(NON_NULL)
+public record ApiResponse<T>(T data, ApiErrorResponse error) {
+
+    public static <T> ApiResponse<T> of(T data, ApiErrorResponse error) {
+        return new ApiResponse<>(data, null);
+    }
+
+    public static <T> ApiResponse<T> of(ErrorCode errorCode) {
+        final ApiErrorResponse errorResponse = new ApiErrorResponse(errorCode.message, errorCode.code);
+        return new ApiResponse<>(null, errorResponse);
+    }
+}
