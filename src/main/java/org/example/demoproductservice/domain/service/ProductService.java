@@ -28,6 +28,15 @@ public class ProductService {
     @Transactional(readOnly = true)
     public Product findLowestPriceProductByCategory(Category category) {
         Product product = productRepository.findTopByCategoryOrderByPriceAsc(category);
+        // FIXME: 에러 메시지 정의
+        if (product == null) throw new ProductNotFoundException();
+        return product;
+    }
+
+    @Transactional(readOnly = true)
+    public Product findHighestPriceProductByCategory(Category category) {
+        Product product = productRepository.findTopByCategoryOrderByPriceDesc(category);
+        // FIXME: 에러 메시지 정의
         if (product == null) throw new ProductNotFoundException();
         return product;
     }

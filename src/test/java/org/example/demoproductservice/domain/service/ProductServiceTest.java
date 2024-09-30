@@ -27,43 +27,6 @@ class ProductServiceTest {
     @InjectMocks
     ProductService sut;
 
-    @DisplayName("카테고리에서 가격이 가장 낮은 상품의 브랜드와 상품가격을 조회한다")
-    @Nested
-    class GetLowestPriceProductOfCertainCategory {
-
-        final Category.CategoryType categoryType = TOP;
-        final Category category = new Category(null, categoryType, null);
-
-        @DisplayName("상의 카테고리 상품 중 가격이 가장 낮은 상품의 브랜드와 상품가격을 조회한다")
-        @Test
-        void test1() {
-            // given
-            // 상의(TOP) 카테고리 상품 중 가격이 가장 낮은 상품의 가격은 10,000원이고 브랜드는 C
-            productRepository.prepareTestData();
-
-            // when
-            Product result = sut.findLowestPriceProductByCategory(category);
-
-            // then
-            assertNotNull(result);
-            assertEquals(10000L, result.getPrice());
-            assertEquals("C", result.getBrand().getBrandName());
-            verify(productRepository).findTopByCategoryOrderByPriceAsc(category);
-        }
-
-        @DisplayName("카테고리에 상품이 1개도 존재하지 않으면 에러를 반환한다")
-        @Test
-        void test2() {
-            // given
-            // 상의(TOP) 카테고리를 포함한 모든 카테고리에 상품이 존재하지 않도록 초기화
-            productRepository.deleteAll();
-
-            // when & then
-            assertThrows(ProductNotFoundException.class, () -> sut.findLowestPriceProductByCategory(category));
-            verify(productRepository).findTopByCategoryOrderByPriceAsc(category);
-        }
-    }
-
     @DisplayName("특정 브랜드의 카테고리에서 가격이 가장 낮은 상품을 조회한다")
     @Nested
     class GetLowestPriceProductOfCertainBrandAndCategory {
@@ -101,6 +64,81 @@ class ProductServiceTest {
             // when & then
             assertThrows(ProductNotFoundException.class, () -> sut.findLowestPriceProductByBrandAndCategory(brand, category));
             verify(productRepository).findTopByBrandAndCategoryOrderByPriceAsc(brand, category);
+        }
+    }
+
+    @DisplayName("카테고리에서 가격이 가장 낮은 상품의 브랜드와 상품가격을 조회한다")
+    @Nested
+    class GetLowestPriceProductOfCertainCategory {
+
+        final Category.CategoryType categoryType = TOP;
+        final Category category = new Category(null, categoryType, null);
+
+        @DisplayName("상의 카테고리 상품 중 가격이 가장 낮은 상품의 브랜드와 상품가격을 조회한다")
+        @Test
+        void test1() {
+            // given
+            // 상의(TOP) 카테고리 상품 중 가격이 가장 낮은 상품의 가격은 10,000원이고 브랜드는 C
+            productRepository.prepareTestData();
+
+            // when
+            Product result = sut.findLowestPriceProductByCategory(category);
+
+            // then
+            assertNotNull(result);
+            assertEquals(10000L, result.getPrice());
+            assertEquals("C", result.getBrand().getBrandName());
+            verify(productRepository).findTopByCategoryOrderByPriceAsc(category);
+        }
+
+        @DisplayName("카테고리에 상품이 1개도 존재하지 않으면 에러를 반환한다")
+        @Test
+        void test2() {
+            // given
+            // 상의(TOP) 카테고리를 포함한 모든 카테고리에 상품이 존재하지 않도록 초기화
+            productRepository.deleteAll();
+
+            // when & then
+            assertThrows(ProductNotFoundException.class, () -> sut.findLowestPriceProductByCategory(category));
+            verify(productRepository).findTopByCategoryOrderByPriceAsc(category);
+        }
+    }
+
+
+    @DisplayName("카테고리에서 가격이 가장 높은 상품의 브랜드와 상품가격을 조회한다")
+    @Nested
+    class GetHighestPriceProductOfCertainCategory {
+
+        final Category.CategoryType categoryType = TOP;
+        final Category category = new Category(null, categoryType, null);
+
+        @DisplayName("상의 카테고리 상품 중 가격이 가장 높은 상품의 브랜드와 상품가격을 조회한다")
+        @Test
+        void test1() {
+            // given
+            // 상의(TOP) 카테고리 상품 중 가격이 높은 낮은 상품의 가격은 11,400원이고 브랜드는 I
+            productRepository.prepareTestData();
+
+            // when
+            Product result = sut.findHighestPriceProductByCategory(category);
+
+            // then
+            assertNotNull(result);
+            assertEquals(11400L, result.getPrice());
+            assertEquals("I", result.getBrand().getBrandName());
+            verify(productRepository).findTopByCategoryOrderByPriceDesc(category);
+        }
+
+        @DisplayName("카테고리에 상품이 1개도 존재하지 않으면 에러를 반환한다")
+        @Test
+        void test2() {
+            // given
+            // 상의(TOP) 카테고리를 포함한 모든 카테고리에 상품이 존재하지 않도록 초기화
+            productRepository.deleteAll();
+
+            // when & then
+            assertThrows(ProductNotFoundException.class, () -> sut.findHighestPriceProductByCategory(category));
+            verify(productRepository).findTopByCategoryOrderByPriceDesc(category);
         }
     }
 }
