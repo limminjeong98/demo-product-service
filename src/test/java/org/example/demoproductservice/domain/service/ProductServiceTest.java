@@ -13,10 +13,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.example.demoproductservice.domain.repository.entity.Category.CategoryType.BOTTOM;
 import static org.example.demoproductservice.domain.repository.entity.Category.CategoryType.TOP;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -139,6 +141,137 @@ class ProductServiceTest {
             // when & then
             assertThrows(ProductNotFoundException.class, () -> sut.findHighestPriceProductByCategory(category));
             verify(productRepository).findTopByCategoryOrderByPriceDesc(category);
+        }
+    }
+
+    @DisplayName("상품 조회")
+    @Nested
+    class FindById {
+
+        @DisplayName("상품 id로 상품을 조회한다")
+        @Test
+        void testSuccess() {
+            // given
+            productRepository.prepareTestData();
+            Long id = 1L;
+
+            // when
+            Product result = sut.findById(id);
+
+            // then
+            assertNotNull(result);
+            assertEquals(id, result.getId());
+            verify(productRepository).findById(id);
+        }
+
+        @DisplayName("상품 id에 해당하는 상품이 없다면 예외가 발생한다")
+        @Test
+        void testFail() {
+            // given
+            Long id = 1L;
+
+            // when & then
+            assertThrows(ProductNotFoundException.class, () -> sut.findById(id));
+        }
+    }
+
+    @DisplayName("상품 등록")
+    @Nested
+    class RegisterProduct {
+        @DisplayName("상품을 신규 등록한다")
+        @Test
+        void testRegisterProduct() {
+            // given
+            Category category = new Category(1L, null, null);
+            Brand brand = new Brand(1L, null);
+            Long price = 1000L;
+
+            // when
+            Product result = sut.register(category, brand, price);
+
+            // then
+            assertNotNull(result);
+            assertEquals(category.getId(), result.getCategory().getId());
+            assertEquals(price, result.getPrice());
+        }
+    }
+
+    @DisplayName("상품 수정")
+    @Nested
+    class UpdateProduct {
+        @DisplayName("기존에 저장되어 있던 상품을 업데이트한다")
+        @Test
+        void testUpdateProductSuccess() {
+            // given
+            productRepository.prepareTestData();
+            Long id = 1L;
+            Product product = productRepository.findById(id).get();
+            Brand previousBrand = product.getBrand();
+            Category previousCategory = product.getCategory();
+            Long previousPrice = product.getPrice();
+
+
+            Category newCategory = new Category(11L, null, null);
+            Brand newBrand = new Brand(11L, null);
+            Long newPrice = 100L;
+
+            // when
+            Product result = sut.update(id, newCategory, newBrand, newPrice);
+
+            // then
+            assertNotNull(result);
+            assertNotEquals(previousCategory.getId(), result.getCategory().getId());
+            assertEquals(newCategory.getId(), result.getCategory().getId());
+            assertNotEquals(previousBrand.getId(), result.getBrand().getId());
+            assertEquals(newBrand.getId(), result.getBrand().getId());
+            assertNotEquals(previousPrice, result.getPrice());
+            assertEquals(newPrice, result.getPrice());
+        }
+
+        @DisplayName("업데이트하려는 상품이 없을 경우 예외가 발생한다")
+        @Test
+        void testUpdateProductFail() {
+            // given
+            Long id = 1L;
+            Category category = new Category(1L, null, null);
+            Brand brand = new Brand(1L, null);
+            Long price = 1000L;
+
+            // when & then
+            assertThrows(ProductNotFoundException.class, () -> sut.update(id, category, brand, price));
+        }
+    }
+
+    @DisplayName("상품 삭제")
+    @Nested
+    class DeleteProduct {
+        @DisplayName("저장된 상품을 삭제한다")
+        @Test
+        void testDeleteProductByIdSuccess() {
+            // given
+            productRepository.prepareTestData();
+            Long id = 1L;
+
+            // when
+            sut.delete(id);
+
+            // then
+            Optional<Product> result = productRepository.findById(id);
+            assertTrue(result.isEmpty());
+            verify(productRepository, atLeastOnce()).findById(id);
+            verify(productRepository).deleteById(id);
+        }
+
+        @DisplayName("삭제하려는 상품 id에 해당하는 상품이 없다면 예외가 발생한다")
+        @Test
+        void testDeleteProductByIdFail() {
+            // given
+            Long id = 1L;
+
+            // when & then
+            assertThrows(ProductNotFoundException.class, () -> sut.delete(id));
+            verify(productRepository).findById(id);
+            verify(productRepository, never()).deleteById(id);
         }
     }
 }
