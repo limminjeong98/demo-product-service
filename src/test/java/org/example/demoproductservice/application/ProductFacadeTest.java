@@ -78,7 +78,7 @@ class ProductFacadeTest {
 
             // then
             assertNotNull(result);
-            assertEquals(34100L, result.totalPrice());
+            assertEquals(34100L, result.totalCost());
             List<CoordItem> items = result.items();
             assertEquals(8, items.size());
             for (CoordItem item : items) {
