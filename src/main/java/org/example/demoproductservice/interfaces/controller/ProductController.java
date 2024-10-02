@@ -4,6 +4,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import org.example.demoproductservice.application.BrandCoordSet;
+import org.example.demoproductservice.application.CategoryProductSet;
+import org.example.demoproductservice.application.CoordSet;
 import org.example.demoproductservice.application.ProductFacade;
 import org.example.demoproductservice.common.controller.ApiResponse;
 import org.example.demoproductservice.common.exception.BrandNotFoundException;
@@ -27,6 +30,47 @@ public class ProductController {
 
     public ProductController(ProductFacade productFacade) {
         this.productFacade = productFacade;
+    }
+
+    @GetMapping("/coordi-set/minimum-total-cost")
+    public ApiResponse<CoordSet> getMinimumTotalCostProductSet() {
+        CoordSet coordSet;
+        try {
+            coordSet = productFacade.getLowestPriceProductSet();
+        } catch (CategoryNotFoundException e) {
+            throw new CommonHttpException(ErrorCode.CATEGORY_NOT_FOUND, HttpStatus.NOT_FOUND);
+        } catch (ProductNotFoundException e) {
+            throw new CommonHttpException(ErrorCode.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
+        }
+        return ApiResponse.of(coordSet);
+    }
+
+    @GetMapping("/coordi-set/minimum-total-cost/one-brand")
+    public ApiResponse<BrandCoordSet> getMinimumTotalCostOneBrandProductSet() {
+        BrandCoordSet brandCoordSet;
+        try {
+            brandCoordSet = productFacade.getLowestPriceBrandProductSet();
+        } catch (BrandNotFoundException e) {
+            throw new CommonHttpException(ErrorCode.BRAND_NOT_FOUND, HttpStatus.NOT_FOUND);
+        } catch (CategoryNotFoundException e) {
+            throw new CommonHttpException(ErrorCode.CATEGORY_NOT_FOUND, HttpStatus.NOT_FOUND);
+        } catch (ProductNotFoundException e) {
+            throw new CommonHttpException(ErrorCode.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
+        }
+        return ApiResponse.of(brandCoordSet);
+    }
+
+    @GetMapping("/lowest-and-highest-price")
+    public ApiResponse<CategoryProductSet> getLowestAndHighestPriceProducts(@RequestParam(required = true, name = "categoryType") @NotNull(message = "categoryType(카테고리명)은 필수 값입니다.") String categoryType) {
+        CategoryProductSet productSet;
+        try {
+            productSet = productFacade.getLowestAndHighestPriceProductByCategory(categoryType);
+        } catch (ProductNotFoundException e) {
+            throw new CommonHttpException(ErrorCode.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
+        } catch (CategoryNotFoundException e) {
+            throw new CommonHttpException(ErrorCode.CATEGORY_NOT_FOUND, HttpStatus.NOT_FOUND);
+        }
+        return ApiResponse.of(productSet);
     }
 
     @GetMapping("/{productId}")
