@@ -1,0 +1,63 @@
+### 카테고리별 최저가격 상품으로 구성된 코디 정보(각 상품의 브랜드와 가격, 코디 상품 총액) 조회
+GET {{host}}/api/v1/products/coordi-set/minimum-total-cost
+
+> {%
+    client.log(response.body);
+%}
+
+### 단일 브랜드로 전체 카테고리 상품을 구매할 경우, 상품 가격 총액이 가장 낮은 브랜드의 코디 정보 조회
+GET {{host}}/api/v1/products/coordi-set/minimum-total-cost/one-brand
+
+> {%
+    client.log(response.body);
+%}
+
+### 카테고리별 최저, 최고 가격 상품 정보 조회
+GET {{host}}/api/v1/products/lowest-and-highest-price?categoryType={{categoryType}}
+
+> {%
+    client.log(response.body);
+%}
+
+### 상품 등록
+POST {{host}}/api/v1/products
+Content-Type: application/json
+
+{
+  "categoryId": {{categoryId}},
+  "brandId": {{brandId}},
+  "price": 5000
+}
+
+> {%
+    client.log(response.body);
+    client.global.set("productId", response.body.data.id);
+%}
+
+### 상품 조회
+GET {{host}}/api/v1/products/{{productId}}
+
+> {%
+    client.log(response.body);
+ %}
+
+### 상품 수정
+PATCH {{host}}/api/v1/products/{{productId}}
+Content-Type: application/json
+
+{
+  "categoryId": {{categoryId}},
+  "brandId": {{brandId}},
+  "price": {{price}}
+}
+
+> {%
+    client.log(response.body);
+%}
+
+### 상품 삭제
+DELETE {{host}}/api/v1/products/{{productId}}
+
+> {%
+    client.log(response.body);
+%}
