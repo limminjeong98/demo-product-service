@@ -50,7 +50,7 @@ public class ProductController {
             brandCoordSet = productFacade.getLowestPriceBrandProductSet();
         } catch (AtLeastOneBrandRequiredException e) {
             throw new CommonHttpException(ErrorCode.AT_LEAST_ONE_BRAND_REQUIRED, HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (CategoryNotFoundException e) {
+        } catch (AtLeastOneCategoryRequiredException e) {
             throw new CommonHttpException(ErrorCode.AT_LEAST_ONE_CATEGORY_REQUIRED, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (AtLeastOneBrandRegisterAllCategoriesException e) {
             throw new CommonHttpException(ErrorCode.AT_LEAST_ONE_BRAND_REGISTER_ALL_CATEGORIES, HttpStatus.INTERNAL_SERVER_ERROR);

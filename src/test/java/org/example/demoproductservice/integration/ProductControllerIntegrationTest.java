@@ -31,7 +31,7 @@ public class ProductControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @Order(1)
-    @DisplayName("각 카테고리별 가격이 가장 낮은 상품으로 구성된 코디 조회 성공")
+    @DisplayName("카테고리별 최저가격 상품으로 구성된 코디 조회 성공")
     @Test
     void testGetMinimumTotalCostProductSetSuccess() throws Exception {
         mockMvc.perform(get("/api/v1/products/coordi-set/minimum-total-cost"))
@@ -69,7 +69,7 @@ public class ProductControllerIntegrationTest {
     @Order(2)
     @Sql(statements = {"TRUNCATE TABLE products"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = {"classpath:data-products.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    @DisplayName("각 카테고리별 가격이 가장 낮은 상품으로 구성된 코디 조회 실패")
+    @DisplayName("카테고리별 최저가격 상품으로 구성된 코디 조회 실패")
     @Test
     void testGetMinimumTotalCostProductSetFail() throws Exception {
         mockMvc.perform(get("/api/v1/products/coordi-set/minimum-total-cost"))

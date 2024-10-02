@@ -25,7 +25,7 @@ public class ProductFacade {
     }
 
     /**
-     * 각 카테고리별 가격이 가장 낮은 상품으로 구성된 코디 정보(각 상품의 브랜드와 가격, 코디 상품 총액)를 반환
+     * 카테고리별 최저가격 상품으로 구성된 코디 정보(각 상품의 브랜드와 가격, 코디 상품 총액)를 반환
      */
     public CoordSet getLowestPriceProductSet() {
         List<CoordItem> items = new ArrayList<>();
@@ -82,7 +82,7 @@ public class ProductFacade {
 
         // 모든 브랜드가 CategoryType enum에 정의된 상품을 모두 등록하지 않았다면 코디 상품을 만들 수 없으므로 예외를 던진다
         if (brandCoordSetMap.isEmpty()) throw new AtLeastOneBrandRegisterAllCategoriesException();
-        return brandCoordSetMap.values().stream().min(Comparator.comparing(BrandCoordSet::getTotalPrice)).get();
+        return brandCoordSetMap.values().stream().min(Comparator.comparing(BrandCoordSet::getTotalCost)).get();
     }
 
     /**
