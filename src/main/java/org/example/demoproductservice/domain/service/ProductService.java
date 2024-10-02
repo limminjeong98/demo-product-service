@@ -28,7 +28,6 @@ public class ProductService {
     @Transactional(readOnly = true)
     public Product findLowestPriceProductByCategory(Category category) {
         Product product = productRepository.findTopByCategoryOrderByPriceAsc(category);
-        // FIXME: 에러 메시지 정의
         if (product == null) throw new ProductNotFoundException();
         return product;
     }
@@ -36,7 +35,6 @@ public class ProductService {
     @Transactional(readOnly = true)
     public Product findHighestPriceProductByCategory(Category category) {
         Product product = productRepository.findTopByCategoryOrderByPriceDesc(category);
-        // FIXME: 에러 메시지 정의
         if (product == null) throw new ProductNotFoundException();
         return product;
     }
@@ -51,7 +49,7 @@ public class ProductService {
         return productRepository.save(new Product(null, category, brand, price));
     }
 
-    public Product update(Long id, Category category,  Brand brand, Long price) {
+    public Product update(Long id, Category category, Brand brand, Long price) {
         Product product = productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
         return productRepository.save(new Product(id, category, brand, price));
     }

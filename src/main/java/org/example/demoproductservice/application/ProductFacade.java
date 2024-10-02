@@ -34,6 +34,9 @@ public class ProductFacade {
         Long totalPrice = 0L;
 
         List<Category> categories = categoryService.findAll();
+        if (categories.isEmpty()) {
+            throw new CategoryNotFoundException();
+        }
 
         for (Category category : categories) {
             Product product = productService.findLowestPriceProductByCategory(category);
@@ -49,11 +52,9 @@ public class ProductFacade {
     public BrandCoordSet getLowestPriceBrandProductSet() {
 
         List<Brand> brands = brandService.findAll();
-        // FIXME: 에러 메시지 정의
         if (brands.isEmpty()) throw new BrandNotFoundException();
 
         List<Category> categories = categoryService.findAll();
-        // FIXME: 에러 메시지 정의
         if (categories.isEmpty()) throw new CategoryNotFoundException();
 
         // 각 브랜드별 상품 조합 구하기
@@ -74,7 +75,7 @@ public class ProductFacade {
                     break;
                 }
                 brandTotalPrice += product.getPrice();
-                items.add(new BrandCoordItem(brand.getBrandName(), product.getPrice()));
+                items.add(new BrandCoordItem(category.getCategoryType().name(), product.getPrice()));
             }
             if (!possible) continue;
             brandCoordSetMap.put(brand, new BrandCoordSet(brand.getBrandName(), items, brandTotalPrice));
@@ -87,7 +88,6 @@ public class ProductFacade {
      * 카테고리별 최저, 최고 가격 상품 정보(카테고리, 브랜드, 상품 가격)를 반환
      */
     public CategoryProductSet getLowestAndHighestPriceProductByCategory(String categoryType) {
-        // FIXME: 에러 메시지 정의
         Category category = categoryService.findByCategoryType(categoryType);
         if (category == null) return null;
 
@@ -97,7 +97,6 @@ public class ProductFacade {
             lowestPriceProduct = productService.findLowestPriceProductByCategory(category);
             highestPriceProduct = productService.findHighestPriceProductByCategory(category);
         } catch (ProductNotFoundException e) {
-            // FIXME: 예외 케이스 정의
             return null;
         }
 
