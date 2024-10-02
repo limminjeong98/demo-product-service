@@ -29,7 +29,7 @@ public class CategoryService {
             type = Category.CategoryType.valueOf(categoryType);
         } catch (IllegalArgumentException e) {
             // CategoryType enum에 정의되지 않은 카테고리를 조회한 경우
-            return null;
+            throw new CategoryNotFoundException();
         }
         return categoryRepository.findByCategoryType(type);
     }
