@@ -106,4 +106,25 @@ public class ProductFacade {
                 new CategoryProductItem(highestPriceProduct.getBrand().getBrandName(), highestPriceProduct.getPrice())
         );
     }
+
+
+    public Product findProductById(Long id) {
+        return productService.findById(id);
+    }
+
+    public Product registerProduct(Long categoryId, Long brandId, Long price) {
+        Category category = categoryService.findById(categoryId);
+        Brand brand = brandService.findById(brandId);
+        return productService.register(category, brand, price);
+    }
+
+    public Product updateProduct(Long id, Long categoryId, Long brandId, Long price) {
+        Category category = categoryService.findById(categoryId);
+        Brand brand = brandService.findById(brandId);
+        return productService.update(id, category, brand, price);
+    }
+
+    public void deleteProduct(Long id) {
+        productService.delete(id);
+    }
 }
