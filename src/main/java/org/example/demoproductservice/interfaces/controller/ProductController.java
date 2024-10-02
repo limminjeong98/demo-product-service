@@ -9,9 +9,7 @@ import org.example.demoproductservice.application.CategoryProductSet;
 import org.example.demoproductservice.application.CoordSet;
 import org.example.demoproductservice.application.ProductFacade;
 import org.example.demoproductservice.common.controller.ApiResponse;
-import org.example.demoproductservice.common.exception.BrandNotFoundException;
-import org.example.demoproductservice.common.exception.CategoryNotFoundException;
-import org.example.demoproductservice.common.exception.ProductNotFoundException;
+import org.example.demoproductservice.common.exception.*;
 import org.example.demoproductservice.domain.repository.entity.Product;
 import org.example.demoproductservice.interfaces.consts.ErrorCode;
 import org.example.demoproductservice.interfaces.dto.ProductResponse;
@@ -37,10 +35,10 @@ public class ProductController {
         CoordSet coordSet;
         try {
             coordSet = productFacade.getLowestPriceProductSet();
-        } catch (CategoryNotFoundException e) {
-            throw new CommonHttpException(ErrorCode.CATEGORY_NOT_FOUND, HttpStatus.NOT_FOUND);
-        } catch (ProductNotFoundException e) {
-            throw new CommonHttpException(ErrorCode.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
+        } catch (AtLeastOneCategoryRequiredException e) {
+            throw new CommonHttpException(ErrorCode.AT_LEAST_ONE_CATEGORY_REQUIRED, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (AtLeastOneProductRegisteredToCategory e) {
+            throw new CommonHttpException(ErrorCode.AT_LEAST_ONE_PRODUCT_REGISTERED_TO_EACH_CATEGORY, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ApiResponse.of(coordSet);
     }
@@ -50,12 +48,12 @@ public class ProductController {
         BrandCoordSet brandCoordSet;
         try {
             brandCoordSet = productFacade.getLowestPriceBrandProductSet();
-        } catch (BrandNotFoundException e) {
-            throw new CommonHttpException(ErrorCode.BRAND_NOT_FOUND, HttpStatus.NOT_FOUND);
+        } catch (AtLeastOneBrandRequiredException e) {
+            throw new CommonHttpException(ErrorCode.AT_LEAST_ONE_BRAND_REQUIRED, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (CategoryNotFoundException e) {
-            throw new CommonHttpException(ErrorCode.CATEGORY_NOT_FOUND, HttpStatus.NOT_FOUND);
-        } catch (ProductNotFoundException e) {
-            throw new CommonHttpException(ErrorCode.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
+            throw new CommonHttpException(ErrorCode.AT_LEAST_ONE_CATEGORY_REQUIRED, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (AtLeastOneBrandRegisterAllCategoriesException e) {
+            throw new CommonHttpException(ErrorCode.AT_LEAST_ONE_BRAND_REGISTER_ALL_CATEGORIES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ApiResponse.of(brandCoordSet);
     }
@@ -65,10 +63,10 @@ public class ProductController {
         CategoryProductSet productSet;
         try {
             productSet = productFacade.getLowestAndHighestPriceProductByCategory(categoryType);
-        } catch (ProductNotFoundException e) {
-            throw new CommonHttpException(ErrorCode.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
+        } catch (AtLeastOneProductRegisteredToCategory e) {
+            throw new CommonHttpException(ErrorCode.AT_LEAST_ONE_PRODUCT_REGISTERED_TO_EACH_CATEGORY, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (CategoryNotFoundException e) {
-            throw new CommonHttpException(ErrorCode.CATEGORY_NOT_FOUND, HttpStatus.NOT_FOUND);
+            throw new CommonHttpException(ErrorCode.CATEGORY_NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ApiResponse.of(productSet);
     }
