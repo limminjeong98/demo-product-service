@@ -1,5 +1,6 @@
 package org.example.demoproductservice.domain.service;
 
+import org.example.demoproductservice.common.exception.CategoryNotFoundException;
 import org.example.demoproductservice.domain.repository.CategoryRepositoryStub;
 import org.example.demoproductservice.domain.repository.entity.Category;
 import org.junit.jupiter.api.DisplayName;
@@ -14,8 +15,6 @@ import java.util.List;
 
 import static org.example.demoproductservice.domain.repository.entity.Category.CategoryType.TOP;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -86,12 +85,8 @@ class CategoryServiceTest {
             categoryRepository.prepareTestData();
             String categoryType = "INVALID_CATEGORY_TYPE";
 
-            // when
-            Category result = sut.findByCategoryType(categoryType);
-
-            // then
-            assertNull(result);
-            verify(categoryRepository, never()).findByCategoryType(any());
+            // when & then
+            assertThrows(CategoryNotFoundException.class, () -> sut.findByCategoryType(categoryType));
         }
     }
 }
