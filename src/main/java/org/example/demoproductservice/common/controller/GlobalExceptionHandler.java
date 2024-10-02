@@ -7,6 +7,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,7 +29,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * ex) 도메인 엔티티의 타입 불일치(Long 타입 파라미터에 String 타입으로 요청한 경우), @Positive
+     * ex) PathVariable 변수의 타입 불일치(Long 타입 파라미터에 String 타입으로 요청한 경우), @Positive
      */
     @ExceptionHandler(value = {ConstraintViolationException.class})
     public ResponseEntity<ApiResponse<Void>> handleConstraintViolationException(ConstraintViolationException exception) {
@@ -63,6 +64,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
         final ApiResponse<Void> body = ApiResponse.ofErrorCode(METHOD_NOT_ALLOWED);
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).contentType(MediaType.APPLICATION_JSON).body(body);
+    }
+
+    /**
+     * ex) JSON parse error
+     */
+    @ExceptionHandler(value = {HttpMessageNotReadableException.class})
+    public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
+        final ApiResponse<Void> body = ApiResponse.ofErrorCode(INVALID_INPUT);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(body);
     }
 
     /**

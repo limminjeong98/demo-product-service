@@ -1,5 +1,6 @@
 package org.example.demoproductservice.domain.service;
 
+import org.example.demoproductservice.common.exception.AtLeastOneProductRegisteredToCategory;
 import org.example.demoproductservice.common.exception.ProductNotFoundException;
 import org.example.demoproductservice.domain.repository.ProductRepository;
 import org.example.demoproductservice.domain.repository.entity.Brand;
@@ -28,16 +29,14 @@ public class ProductService {
     @Transactional(readOnly = true)
     public Product findLowestPriceProductByCategory(Category category) {
         Product product = productRepository.findTopByCategoryOrderByPriceAsc(category);
-        // FIXME: 에러 메시지 정의
-        if (product == null) throw new ProductNotFoundException();
+        if (product == null) throw new AtLeastOneProductRegisteredToCategory();
         return product;
     }
 
     @Transactional(readOnly = true)
     public Product findHighestPriceProductByCategory(Category category) {
         Product product = productRepository.findTopByCategoryOrderByPriceDesc(category);
-        // FIXME: 에러 메시지 정의
-        if (product == null) throw new ProductNotFoundException();
+        if (product == null) throw new AtLeastOneProductRegisteredToCategory();
         return product;
     }
 
@@ -51,7 +50,7 @@ public class ProductService {
         return productRepository.save(new Product(null, category, brand, price));
     }
 
-    public Product update(Long id, Category category,  Brand brand, Long price) {
+    public Product update(Long id, Category category, Brand brand, Long price) {
         Product product = productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
         return productRepository.save(new Product(id, category, brand, price));
     }

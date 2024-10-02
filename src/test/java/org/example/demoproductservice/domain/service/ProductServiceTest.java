@@ -1,5 +1,6 @@
 package org.example.demoproductservice.domain.service;
 
+import org.example.demoproductservice.common.exception.AtLeastOneProductRegisteredToCategory;
 import org.example.demoproductservice.common.exception.ProductNotFoundException;
 import org.example.demoproductservice.domain.repository.ProductRepositoryStub;
 import org.example.demoproductservice.domain.repository.entity.Brand;
@@ -101,7 +102,7 @@ class ProductServiceTest {
             productRepository.deleteAll();
 
             // when & then
-            assertThrows(ProductNotFoundException.class, () -> sut.findLowestPriceProductByCategory(category));
+            assertThrows(AtLeastOneProductRegisteredToCategory.class, () -> sut.findLowestPriceProductByCategory(category));
             verify(productRepository).findTopByCategoryOrderByPriceAsc(category);
         }
     }
@@ -139,7 +140,7 @@ class ProductServiceTest {
             productRepository.deleteAll();
 
             // when & then
-            assertThrows(ProductNotFoundException.class, () -> sut.findHighestPriceProductByCategory(category));
+            assertThrows(AtLeastOneProductRegisteredToCategory.class, () -> sut.findHighestPriceProductByCategory(category));
             verify(productRepository).findTopByCategoryOrderByPriceDesc(category);
         }
     }
