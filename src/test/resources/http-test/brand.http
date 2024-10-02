@@ -1,0 +1,38 @@
+### 브랜드 등록
+POST {{host}}/api/v1/brands
+Content-Type: application/json
+
+{
+  "brandName": "a"
+}
+
+> {%
+    client.log(response.body);
+    client.global.set("brandId", response.body.data.id);
+%}
+
+### 브랜드 조회
+GET {{host}}/api/v1/brands/{{brandId}}
+
+> {%
+    client.log(response.body);
+ %}
+
+### 브랜드 수정
+PATCH {{host}}/api/v1/brands/{{brandId}}
+Content-Type: application/json
+
+{
+  "brandName": "Updated Brand Name"
+}
+
+> {%
+    client.log(response.body);
+%}
+
+### 브랜드 삭제
+DELETE {{host}}/api/v1/brands/{{brandId}}
+
+> {%
+    client.log(response.body);
+%}

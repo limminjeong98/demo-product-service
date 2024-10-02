@@ -1,3 +1,26 @@
 spring:
   application:
     name: demo-product-service
+  datasource:
+    username: sa
+    password:
+    url: jdbc:h2:~/productdb;mode=mysql # pk auto increment
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        show_sql: true
+    show-sql: true
+    open-in-view: false
+  sql:
+    init:
+      username: sa
+      password:
+      schema-locations: classpath*:db/schema.sql
+      data-locations: classpath*:db/data.sql # 테스트용 데이터
+      mode: always
+  h2:
+    console:
+      enabled: true
+      path: /h2-console

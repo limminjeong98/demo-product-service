@@ -52,7 +52,7 @@ class ProductFacadeTest {
     @Mock
     BrandService brandService;
 
-    @DisplayName("각 카테고리별 가격이 가장 낮은 상품으로 구성된 코디 정보를 조회한다")
+    @DisplayName("카테고리별 최저가격 상품으로 구성된 코디 정보를 조회한다")
     @Nested
     class GetLowestPriceProductSet {
         @DisplayName("각 카테고리에서 가격이 가장 낮은 상품의 브랜드와 가격, 코디 상품 총액을 반환하는지 검증한다")
