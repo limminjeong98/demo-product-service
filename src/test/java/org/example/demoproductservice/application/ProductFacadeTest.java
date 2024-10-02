@@ -1,6 +1,6 @@
 package org.example.demoproductservice.application;
 
-import org.example.demoproductservice.common.exception.BrandNotFoundException;
+import org.example.demoproductservice.common.exception.AtLeastOneBrandRequiredException;
 import org.example.demoproductservice.common.exception.ProductNotFoundException;
 import org.example.demoproductservice.domain.repository.BrandRepositoryStub;
 import org.example.demoproductservice.domain.repository.CategoryRepositoryStub;
@@ -169,7 +169,7 @@ class ProductFacadeTest {
             // then
             assertNotNull(result);
             assertEquals("D", result.brandName());
-            assertEquals(36100L, result.totalPrice());
+            assertEquals(36100L, result.totalCost());
             List<BrandCoordItem> items = result.items();
             for (BrandCoordItem item : items) {
                 if (item.categoryType().equals(TOP.name())) {
@@ -230,9 +230,9 @@ class ProductFacadeTest {
             // then
             assertNotNull(result);
             assertNotEquals("D", result.brandName());
-            assertNotEquals(36100L, result.totalPrice());
+            assertNotEquals(36100L, result.totalCost());
             assertEquals("C", result.brandName());
-            assertEquals(37100L, result.totalPrice());
+            assertEquals(37100L, result.totalCost());
         }
 
         @DisplayName("브랜드가 1개도 등록되어있지 않으면 에러를 반환하는지 검증한다")
@@ -243,7 +243,7 @@ class ProductFacadeTest {
             given(brandService.findAll()).willReturn(new ArrayList<>());
 
             // when & then
-            assertThrows(BrandNotFoundException.class, () -> sut.getLowestPriceBrandProductSet());
+            assertThrows(AtLeastOneBrandRequiredException.class, () -> sut.getLowestPriceBrandProductSet());
         }
     }
 
