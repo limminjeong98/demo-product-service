@@ -1,5 +1,6 @@
 package org.example.demoproductservice.domain.service;
 
+import org.example.demoproductservice.common.exception.CategoryNotFoundException;
 import org.example.demoproductservice.domain.repository.CategoryRepository;
 import org.example.demoproductservice.domain.repository.entity.Category;
 import org.springframework.stereotype.Service;
@@ -31,5 +32,10 @@ public class CategoryService {
             return null;
         }
         return categoryRepository.findByCategoryType(type);
+    }
+
+    @Transactional(readOnly = true)
+    public Category findById(Long id) {
+        return categoryRepository.findById(id).orElseThrow(CategoryNotFoundException::new);
     }
 }
