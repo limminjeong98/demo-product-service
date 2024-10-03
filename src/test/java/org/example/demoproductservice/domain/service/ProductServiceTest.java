@@ -30,9 +30,9 @@ class ProductServiceTest {
     @InjectMocks
     ProductService sut;
 
-    @DisplayName("특정 브랜드의 카테고리에서 가격이 가장 낮은 상품을 조회한다")
+    @DisplayName("특정 브랜드의 카테고리에서 최저 가격 상품 조회")
     @Nested
-    class GetLowestPriceProductOfCertainBrandAndCategory {
+    class FindLowestPriceProductByBrandAndCategory {
 
         final Brand brand = new Brand(null, "E");
         final Category.CategoryType categoryType = BOTTOM;
@@ -70,14 +70,14 @@ class ProductServiceTest {
         }
     }
 
-    @DisplayName("카테고리에서 가격이 가장 낮은 상품의 브랜드와 상품가격을 조회한다")
+    @DisplayName("특정 카테고리의 최저 가격 상품 조회")
     @Nested
-    class GetLowestPriceProductOfCertainCategory {
+    class FindLowestPriceProductByCategory {
 
         final Category.CategoryType categoryType = TOP;
         final Category category = new Category(null, categoryType, null);
 
-        @DisplayName("상의 카테고리 상품 중 가격이 가장 낮은 상품의 브랜드와 상품가격을 조회한다")
+        @DisplayName("상의 카테고리에서 가격이 가장 낮은 상품의 브랜드와 상품가격을 조회한다")
         @Test
         void test1() {
             // given
@@ -108,14 +108,14 @@ class ProductServiceTest {
     }
 
 
-    @DisplayName("카테고리에서 가격이 가장 높은 상품의 브랜드와 상품가격을 조회한다")
+    @DisplayName("특정 카테고리의 최고 가격 상품 조회")
     @Nested
-    class GetHighestPriceProductOfCertainCategory {
+    class FindHighestPriceProductByCategory {
 
         final Category.CategoryType categoryType = TOP;
         final Category category = new Category(null, categoryType, null);
 
-        @DisplayName("상의 카테고리 상품 중 가격이 가장 높은 상품의 브랜드와 상품가격을 조회한다")
+        @DisplayName("상의 카테고리에서 가격이 가장 높은 상품의 브랜드와 상품가격을 조회한다")
         @Test
         void test1() {
             // given
@@ -207,10 +207,10 @@ class ProductServiceTest {
             productRepository.prepareTestData();
             Long id = 1L;
             Product product = productRepository.findById(id).get();
+
             Brand previousBrand = product.getBrand();
             Category previousCategory = product.getCategory();
             Long previousPrice = product.getPrice();
-
 
             Category newCategory = new Category(11L, null, null);
             Brand newBrand = new Brand(11L, null);
@@ -248,7 +248,7 @@ class ProductServiceTest {
     class DeleteProduct {
         @DisplayName("저장된 상품을 삭제한다")
         @Test
-        void testDeleteProductByIdSuccess() {
+        void testDeleteProductSuccess() {
             // given
             productRepository.prepareTestData();
             Long id = 1L;
@@ -265,7 +265,7 @@ class ProductServiceTest {
 
         @DisplayName("삭제하려는 상품 id에 해당하는 상품이 없다면 예외가 발생한다")
         @Test
-        void testDeleteProductByIdFail() {
+        void testDeleteProductFail() {
             // given
             Long id = 1L;
 
