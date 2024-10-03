@@ -31,10 +31,7 @@ public class ProductFacade {
         List<CoordItem> items = new ArrayList<>();
         Long totalPrice = 0L;
 
-        List<Category> categories = categoryService.findAll();
-        if (categories.isEmpty()) {
-            throw new AtLeastOneCategoryRequiredException();
-        }
+        List<Category> categories = getAllCategoriesOrThrowException();
 
         for (Category category : categories) {
             Product product = productService.findLowestPriceProductByCategory(category);
@@ -44,46 +41,45 @@ public class ProductFacade {
         return new CoordSet(items, totalPrice);
     }
 
+
     /**
      * 단일 브랜드로 전체 카테고리 상품을 구매할 경우, 상품 가격 총액이 가장 낮은 브랜드의 코디 정보(브랜드, 각 상품의 가격, 코디 상품 총액)를 반환
      */
     public BrandCoordSet getLowestPriceBrandProductSet() {
 
-        List<Brand> brands = brandService.findAll();
-        if (brands.isEmpty()) throw new AtLeastOneBrandRequiredException();
+        List<Brand> brands = getAllBrandsOrThrowException();
+        List<Category> categories = getAllCategoriesOrThrowException();
 
-        List<Category> categories = categoryService.findAll();
-        if (categories.isEmpty()) throw new AtLeastOneCategoryRequiredException();
-
-        // 각 브랜드별 상품 조합 구하기
+        // 각 브랜드별 코디 상품
         Map<Brand, BrandCoordSet> brandCoordSetMap = new HashMap<>();
 
         for (Brand brand : brands) {
-            Long brandTotalPrice = 0L;
+            Long totalCost = 0L;
             List<BrandCoordItem> items = new ArrayList<>();
 
-            // 해당 브랜드에 모든 카테고리 상품이 등록되어 있어야 코디 상품을 만들 수 있다.
-            boolean possible = true;
+            // 해당 브랜드에 모든 카테고리 상품이 등록되어 있어야 코디 상품을 만들 수 있다. (각 카테고리 타입별로 상품이 최소 1개 이상 존재해야 한다)
+            boolean hasAllCategoryTypeProduct = true;
             for (Category category : categories) {
                 Product product;
                 try {
                     product = productService.findLowestPriceProductByBrandAndCategory(brand, category);
                 } catch (ProductNotFoundException e) {
                     // 해당 브랜드는 제외
-                    possible = false;
+                    hasAllCategoryTypeProduct = false;
                     break;
                 }
-                brandTotalPrice += product.getPrice();
+                totalCost += product.getPrice();
                 items.add(new BrandCoordItem(category.getCategoryType().name(), product.getPrice()));
             }
-            if (!possible) continue;
-            brandCoordSetMap.put(brand, new BrandCoordSet(brand.getBrandName(), items, brandTotalPrice));
+            if (!hasAllCategoryTypeProduct) continue;
+            brandCoordSetMap.put(brand, new BrandCoordSet(brand.getBrandName(), items, totalCost));
         }
 
         // 모든 브랜드가 CategoryType enum에 정의된 상품을 모두 등록하지 않았다면 코디 상품을 만들 수 없으므로 예외를 던진다
         if (brandCoordSetMap.isEmpty()) throw new AtLeastOneBrandRegisterAllCategoriesException();
         return brandCoordSetMap.values().stream().min(Comparator.comparing(BrandCoordSet::getTotalCost)).get();
     }
+
 
     /**
      * 카테고리별 최저, 최고 가격 상품 정보(카테고리, 브랜드, 상품 가격)를 반환
@@ -120,4 +116,19 @@ public class ProductFacade {
     public void deleteProduct(Long id) {
         productService.delete(id);
     }
+
+    private List<Brand> getAllBrandsOrThrowException() {
+        List<Brand> brands = brandService.findAll();
+        if (brands.isEmpty()) throw new AtLeastOneBrandRequiredException();
+        return brands;
+    }
+
+    private List<Category> getAllCategoriesOrThrowException() {
+        List<Category> categories = categoryService.findAll();
+        if (categories.isEmpty()) {
+            throw new AtLeastOneCategoryRequiredException();
+        }
+        return categories;
+    }
+
 }
