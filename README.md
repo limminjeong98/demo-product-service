@@ -1,4 +1,4 @@
-# 상품 코디 서비스
+# 상품 코디 정보 제공 서비스
 
 
 ##### 목차
@@ -461,7 +461,7 @@ Content-Type: application/json
 }
 ```
 실패
-- [brandName이 null 혹은 빈 문자열이거나 공백으로만 이루어진 문자열일 경우](#brandname이-null-혹은-공백이거나-100자를-초과하도록-입력한-경우)
+- [brandName이 null 혹은 빈 문자열로 입력한 경우](#brandname이-null-혹은-빈-문자열로-입력한-경우)
 - [brandName이 공백 1글자 혹은 100자를 초과하도록 입력한 경우](#brandname이-공백-1글자-혹은-100자를-초과하도록-입력한-경우) 
 
 
@@ -503,7 +503,7 @@ Content-Type: application/json
 ```
 실패
 - [brandId에 해당하는 브랜드가 존재하지 않는 경우](#brandId에-해당하는-브랜드가-존재하지-않는-경우)
-- [brandName이 null 혹은 빈 문자열이거나 공백으로만 이루어진 문자열일 경우](#brandname이-null-혹은-공백이거나-100자를-초과하도록-입력한-경우)
+- [brandName이 null 혹은 빈 문자열로 입력한 경우](#brandname이-null-혹은-빈-문자열로-입력한-경우)
 - [brandName이 공백 1글자 혹은 100자를 초과하도록 입력한 경우](#brandname이-공백-1글자-혹은-100자를-초과하도록-입력한-경우)
 
 #### 4. 브랜드 삭제
@@ -582,14 +582,14 @@ Content-Type: application/json
 }
 ```
 
-##### brandName이 null 혹은 공백이거나 100자를 초과하도록 입력한 경우
+##### brandName이 null 혹은 빈 문자열로 입력한 경우
 ```json
 HTTP/1.1 400
 Content-Type: application/json
 
 {
   "error": {
-    "message": "입력이 올바르지 않습니다. 브랜드 이름은 null 혹은 빈 문자열일 수 없습니다. 브랜드 이름은 1자 이상 100자 이하여야 합니다.",
+    "message": "입력이 올바르지 않습니다. 브랜드 이름은 null 혹은 빈 문자열일 수 없습니다.",
     "code": 1000
   }
 }
