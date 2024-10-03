@@ -7,7 +7,7 @@ spring:
     url: jdbc:h2:~/productdb;mode=mysql # pk auto increment
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     properties:
       hibernate:
         show_sql: true
