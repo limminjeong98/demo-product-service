@@ -27,9 +27,9 @@ class BrandServiceTest {
     @InjectMocks
     BrandService sut;
 
-    @DisplayName("모든 브랜드 목록을 조회한다")
+    @DisplayName("브랜드 목록 조회")
     @Nested
-    class GetAllBrands {
+    class FindAll {
         @DisplayName("저장된 모든 브랜드를 반환한다")
         @Test
         void test1() {
@@ -61,12 +61,12 @@ class BrandServiceTest {
         }
     }
 
-    @DisplayName("브랜드를 조회한다")
+    @DisplayName("브랜드 조회")
     @Nested
-    class FindBrandById {
+    class FindById {
         @DisplayName("저장된 브랜드를 조회한다")
         @Test
-        void testFindBrandByIdSuccess() {
+        void testFindByIdSuccess() {
             // given
             brandRepository.prepareTestData();
             Long id = 1L;
@@ -80,9 +80,9 @@ class BrandServiceTest {
             verify(brandRepository).findById(id);
         }
 
-        @DisplayName("조회한 id에 해당하는 브랜드를 없다면 예외가 발생한다")
+        @DisplayName("브랜드 id에 해당하는 브랜드가 없다면 예외가 발생한다")
         @Test
-        void testFindBrandByIdFail() {
+        void testFindByIdFail() {
             // given
             Long id = 1L;
 
@@ -91,11 +91,11 @@ class BrandServiceTest {
         }
     }
 
-    @DisplayName("브랜드를 저장한다")
+    @DisplayName("브랜드 등록")
     @Nested
     class RegisterBrand {
 
-        @DisplayName("브랜드를 새로 등록한다")
+        @DisplayName("신규 브랜드를 등록한다")
         @Test
         void testRegisterBrand() {
             // given
@@ -112,7 +112,7 @@ class BrandServiceTest {
         }
     }
 
-    @DisplayName("브랜드를 업데이트한다")
+    @DisplayName("브랜드 수정")
     @Nested
     class UpdateBrand {
 
@@ -149,12 +149,12 @@ class BrandServiceTest {
         }
     }
 
-    @DisplayName("브랜드를 삭제한다")
+    @DisplayName("브랜드 삭제")
     @Nested
-    class DeleteBrandById {
+    class DeleteBrand {
         @DisplayName("저장된 브랜드를 삭제한다")
         @Test
-        void testDeleteBrandByIdSuccess() {
+        void testDeleteBrandSuccess() {
             // given
             brandRepository.prepareTestData();
             Long id = 1L;
@@ -171,7 +171,7 @@ class BrandServiceTest {
 
         @DisplayName("삭제하려는 브랜드 id에 해당하는 브랜드가 없다면 예외가 발생한다")
         @Test
-        void testDeleteBrandByIdFail() {
+        void testDeleteBrandFail() {
             // given
             Long id = 1L;
 
