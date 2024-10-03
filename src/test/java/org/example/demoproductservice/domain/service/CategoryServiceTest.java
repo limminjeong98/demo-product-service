@@ -26,9 +26,9 @@ class CategoryServiceTest {
     @InjectMocks
     CategoryService sut;
 
-    @DisplayName("모든 카테고리 목록을 조회한다")
+    @DisplayName("카테고리 목록 조회")
     @Nested
-    class findAll {
+    class FindAll {
         @DisplayName("저장된 모든 카테고리를 반환한다")
         @Test
         void test1() {
@@ -59,9 +59,41 @@ class CategoryServiceTest {
         }
     }
 
-    @DisplayName("카테고리 타입으로 카테고리를 조회한다")
+    @DisplayName("카테고리 조회")
     @Nested
-    class findByCategoryType {
+    class FindById {
+        @DisplayName("categoryId에 해당하는 카테고리를 반환한다")
+        @Test
+        void test1() {
+            // given
+            categoryRepository.prepareTestData();
+            Long categoryId = 1L;
+
+            // when
+            Category result = sut.findById(categoryId);
+
+            // then
+            assertNotNull(result);
+            assertEquals(categoryId, result.getId());
+            verify(categoryRepository).findById(1L);
+        }
+
+        @DisplayName("categoryId에 해당하는 카테고리가 없다면 에러를 반환한다")
+        @Test
+        void test2() {
+            // given
+            categoryRepository.prepareTestData();
+            Long notExistingCategoryId = 111L;
+
+            // when & then
+            assertThrows(CategoryNotFoundException.class, () -> sut.findById(notExistingCategoryId));
+            verify(categoryRepository).findById(notExistingCategoryId);
+        }
+    }
+
+    @DisplayName("카테고리 타입으로 카테고리를 조회")
+    @Nested
+    class FindByCategoryType {
         @DisplayName("존재하는 카테고리 타입이면 카테고리를 반환한다")
         @Test
         void testSuccess() {
