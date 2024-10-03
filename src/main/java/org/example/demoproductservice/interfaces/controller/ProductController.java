@@ -3,6 +3,7 @@ package org.example.demoproductservice.interfaces.controller;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.example.demoproductservice.application.BrandCoordSet;
 import org.example.demoproductservice.application.CategoryProductSet;
@@ -59,12 +60,12 @@ public class ProductController {
     }
 
     @GetMapping("/lowest-and-highest-price")
-    public ApiResponse<CategoryProductSet> getLowestAndHighestPriceProducts(@RequestParam(required = true, name = "categoryType") @NotNull(message = "categoryType(카테고리명)은 필수 값입니다.") String categoryType) {
+    public ApiResponse<CategoryProductSet> getLowestAndHighestPriceProducts(@RequestParam(required = true, name = "categoryType") @NotBlank(message = "categoryType(카테고리명)은 필수 값입니다.") String categoryType) {
         CategoryProductSet productSet;
         try {
             productSet = productFacade.getLowestAndHighestPriceProductByCategory(categoryType);
         } catch (AtLeastOneProductRegisteredToCategory e) {
-            throw new CommonHttpException(ErrorCode.AT_LEAST_ONE_PRODUCT_REGISTERED_TO_EACH_CATEGORY, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CommonHttpException(ErrorCode.AT_LEAST_ONE_PRODUCT_REGISTERED_TO_CATEGORY, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (CategoryNotFoundException e) {
             throw new CommonHttpException(ErrorCode.CATEGORY_NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
         }

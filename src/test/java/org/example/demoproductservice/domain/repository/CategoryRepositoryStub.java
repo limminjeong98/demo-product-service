@@ -42,6 +42,11 @@ public class CategoryRepositoryStub implements CategoryRepository {
         return categories.get(categoryType);
     }
 
+    @Override
+    public Optional<Category> findById(Long aLong) {
+        return categories.values().stream().filter(category -> category.getId().equals(aLong)).findFirst();
+    }
+
     /** 이하 미구현 **/
     @Override
     public void flush() {
@@ -131,11 +136,6 @@ public class CategoryRepositoryStub implements CategoryRepository {
     @Override
     public <S extends Category> List<S> saveAll(Iterable<S> entities) {
         return List.of();
-    }
-
-    @Override
-    public Optional<Category> findById(Long aLong) {
-        return Optional.empty();
     }
 
     @Override

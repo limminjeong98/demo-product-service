@@ -20,7 +20,8 @@ public enum ErrorCode {
     /* 상품 */
     PRODUCT_NOT_FOUND("상품이 존재하지 않습니다.", 4000L),
     AT_LEAST_ONE_PRODUCT_REQUIRED("등록된 상품이 없습니다. 상품은 최소 1개 이상이어야 합니다.", 4001L),
-    AT_LEAST_ONE_PRODUCT_REGISTERED_TO_EACH_CATEGORY("적어도 1개 이상의 상품이 각 카테고리에 등록되어야 있어야 합니다.", 4002L)
+    AT_LEAST_ONE_PRODUCT_REGISTERED_TO_EACH_CATEGORY("적어도 1개 이상의 상품이 각 카테고리에 등록되어야 있어야 합니다.", 4002L),
+    AT_LEAST_ONE_PRODUCT_REGISTERED_TO_CATEGORY("해당 카테고리에 등록된 상품이 없습니다.", 4003L)
 
 
     ;

@@ -16,14 +16,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Disabled
 @ActiveProfiles("integration-test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Sql(scripts = {"classpath:schema.sql", "classpath:data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProductControllerIntegrationTest {
+public class ProductIntegrationTest {
     final String existingProductId = "1";
     final String nonExistingProductId = "100";
 
@@ -69,7 +68,7 @@ public class ProductControllerIntegrationTest {
     @Order(2)
     @Sql(statements = {"TRUNCATE TABLE products"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = {"classpath:data-products.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    @DisplayName("카테고리별 최저가격 상품으로 구성된 코디 조회 실패")
+    @DisplayName("카테고리별 최저가격 상품으로 구성된 코디 조회 실패 - 모든 카테고리에 상품이 등록되어 있지 않은 경우")
     @Test
     void testGetMinimumTotalCostProductSetFail() throws Exception {
         mockMvc.perform(get("/api/v1/products/coordi-set/minimum-total-cost"))
@@ -81,6 +80,20 @@ public class ProductControllerIntegrationTest {
     }
 
     @Order(3)
+    @Sql(statements = {"TRUNCATE TABLE categories"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = {"classpath:data-categories.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @DisplayName("카테고리별 최저가격 상품으로 구성된 코디 조회 실패 - 카테고리가 존재하지 않는 경우")
+    @Test
+    void testGetMinimumTotalCostProductSetFail2() throws Exception {
+        mockMvc.perform(get("/api/v1/products/coordi-set/minimum-total-cost"))
+                .andExpectAll(
+                        status().isInternalServerError(),
+                        jsonPath("$.error.message").value(AT_LEAST_ONE_CATEGORY_REQUIRED.message),
+                        jsonPath("$.error.code").value(AT_LEAST_ONE_CATEGORY_REQUIRED.code)
+                );
+    }
+
+    @Order(4)
     @DisplayName("단일 브랜드로 전체 카테고리 상품을 구매할 경우, 상품 가격 총액이 가장 낮은 브랜드의 코디 조회 성공")
     @Test
     void testGetMinimumTotalCostOneBrandProductSetSuccess() throws Exception {
@@ -109,10 +122,10 @@ public class ProductControllerIntegrationTest {
                 );
     }
 
-    @Order(4)
+    @Order(5)
     @Sql(statements = {"TRUNCATE TABLE products"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = {"classpath:data-products.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    @DisplayName("단일 브랜드로 전체 카테고리 상품을 구매할 경우, 상품 가격 총액이 가장 낮은 브랜드의 코디 조회 실패")
+    @DisplayName("단일 브랜드로 전체 카테고리 상품을 구매할 경우, 상품 가격 총액이 가장 낮은 브랜드의 코디 조회 실패 - 모든 카테고리의 상품을 등록한 브랜드가 없는 경우")
     @Test
     void testGetMinimumTotalCostOneBrandProductSetFail() throws Exception {
         mockMvc.perform(get("/api/v1/products/coordi-set/minimum-total-cost/one-brand"))
@@ -123,13 +136,41 @@ public class ProductControllerIntegrationTest {
                 );
     }
 
-    @Order(5)
+    @Order(6)
+    @Sql(statements = {"TRUNCATE TABLE categories"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = {"classpath:data-categories.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @DisplayName("단일 브랜드로 전체 카테고리 상품을 구매할 경우, 상품 가격 총액이 가장 낮은 브랜드의 코디 조회 실패 - 카테고리가 존재하지 않는 경우")
+    @Test
+    void testGetMinimumTotalCostOneBrandProductSetFail2() throws Exception {
+        mockMvc.perform(get("/api/v1/products/coordi-set/minimum-total-cost/one-brand"))
+                .andExpectAll(
+                        status().isInternalServerError(),
+                        jsonPath("$.error.message").value(AT_LEAST_ONE_CATEGORY_REQUIRED.message),
+                        jsonPath("$.error.code").value(AT_LEAST_ONE_CATEGORY_REQUIRED.code)
+                );
+    }
+
+    @Order(7)
+    @Sql(statements = {"TRUNCATE TABLE brands"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = {"classpath:data-brands.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @DisplayName("단일 브랜드로 전체 카테고리 상품을 구매할 경우, 상품 가격 총액이 가장 낮은 브랜드의 코디 조회 실패 - 브랜드가 존재하지 않는 경우")
+    @Test
+    void testGetMinimumTotalCostOneBrandProductSetFail3() throws Exception {
+        mockMvc.perform(get("/api/v1/products/coordi-set/minimum-total-cost/one-brand"))
+                .andExpectAll(
+                        status().isInternalServerError(),
+                        jsonPath("$.error.message").value(AT_LEAST_ONE_BRAND_REQUIRED.message),
+                        jsonPath("$.error.code").value(AT_LEAST_ONE_BRAND_REQUIRED.code)
+                );
+    }
+
+    @Order(8)
     @DisplayName("카테고리별 최저, 최고 가격 상품 정보 조회 성공")
     @Test
     void testGetLowestAndHighestPriceProductsSuccess() throws Exception {
         String categoryType = "TOP";
 
-        mockMvc.perform(get("/api/v1/products/lowest-and-highest-price?categoryType={categoryType}",categoryType))
+        mockMvc.perform(get("/api/v1/products/lowest-and-highest-price?categoryType={categoryType}", categoryType))
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$.data.categoryType").value("TOP"),
@@ -140,12 +181,12 @@ public class ProductControllerIntegrationTest {
                 );
     }
 
-    @Order(6)
-    @DisplayName("카테고리별 최저, 최고 가격 상품 정보 조회 실패")
+    @Order(9)
+    @DisplayName("카테고리별 최저, 최고 가격 상품 정보 조회 실패 - 카테고리가 존재하지 않는 경우")
     @Test
     void testGetLowestAndHighestPriceProductsFail() throws Exception {
         String categoryType = "INVALID_CATEGORY_TOP";
-        mockMvc.perform(get("/api/v1/products/lowest-and-highest-price?categoryType={categoryType}",categoryType))
+        mockMvc.perform(get("/api/v1/products/lowest-and-highest-price?categoryType={categoryType}", categoryType))
                 .andExpectAll(
                         status().isInternalServerError(),
                         jsonPath("$.error.message").value(CATEGORY_NOT_FOUND.message),
@@ -153,7 +194,22 @@ public class ProductControllerIntegrationTest {
                 );
     }
 
-    @Order(7)
+    @Order(10)
+    @Sql(statements = {"TRUNCATE TABLE products"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = {"classpath:data-products.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @DisplayName("카테고리별 최저, 최고 가격 상품 정보 조회 실패 - 해당 카테고리에 등록된 상품이 없는 경우")
+    @Test
+    void testGetLowestAndHighestPriceProductsFail2() throws Exception {
+        String categoryType = "TOP";
+        mockMvc.perform(get("/api/v1/products/lowest-and-highest-price?categoryType={categoryType}", categoryType))
+                .andExpectAll(
+                        status().isInternalServerError(),
+                        jsonPath("$.error.message").value(AT_LEAST_ONE_PRODUCT_REGISTERED_TO_CATEGORY.message),
+                        jsonPath("$.error.code").value(AT_LEAST_ONE_PRODUCT_REGISTERED_TO_CATEGORY.code)
+                );
+    }
+
+    @Order(11)
     @DisplayName("상품 조회 실패")
     @Test
     void testFindProductFail() throws Exception {
@@ -165,7 +221,7 @@ public class ProductControllerIntegrationTest {
                 );
     }
 
-    @Order(8)
+    @Order(12)
     @DisplayName("상품 조회 성공")
     @Test
     void testFindProductSuccess() throws Exception {
@@ -179,7 +235,7 @@ public class ProductControllerIntegrationTest {
                 );
     }
 
-    @Order(9)
+    @Order(13)
     @DisplayName("상품 등록 실패")
     @Test
     void testRegisterProductFail() throws Exception {
@@ -200,7 +256,7 @@ public class ProductControllerIntegrationTest {
                 );
     }
 
-    @Order(10)
+    @Order(14)
     @DisplayName("상품 등록 성공")
     @Test
     void testRegisterProductSuccess() throws Exception {
@@ -221,7 +277,7 @@ public class ProductControllerIntegrationTest {
                         jsonPath("$.data.price").value(55000));
     }
 
-    @Order(11)
+    @Order(15)
     @DisplayName("상품 수정 실패")
     @Test
     void testUpdateProductFail() throws Exception {
@@ -240,7 +296,7 @@ public class ProductControllerIntegrationTest {
                         jsonPath("$.error.code").value(ErrorCode.INVALID_INPUT.code));
     }
 
-    @Order(12)
+    @Order(16)
     @DisplayName("상품 수정 성공")
     @Test
     void testUpdateProductSuccess() throws Exception {
@@ -261,7 +317,7 @@ public class ProductControllerIntegrationTest {
                         jsonPath("$.data.price").value(55000));
     }
 
-    @Order(13)
+    @Order(17)
     @DisplayName("상품 삭제 실패")
     @Test
     void testDeleteProductFail() throws Exception {
@@ -270,13 +326,12 @@ public class ProductControllerIntegrationTest {
                 .andExpectAll((status().isNotFound()), jsonPath("$.error.message").value(PRODUCT_NOT_FOUND.message), jsonPath("$.error.code").value(PRODUCT_NOT_FOUND.code));
     }
 
-    @Order(14)
+    @Order(18)
     @DisplayName("상품 삭제 성공")
     @Test
     void testDeleteProductSuccess() throws Exception {
 
         mockMvc.perform(delete("/api/v1/products/{productId}", existingProductId)).andExpect(status().isOk());
     }
-
 
 }

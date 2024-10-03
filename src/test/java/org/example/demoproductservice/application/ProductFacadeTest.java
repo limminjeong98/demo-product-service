@@ -1,6 +1,7 @@
 package org.example.demoproductservice.application;
 
 import org.example.demoproductservice.common.exception.AtLeastOneBrandRequiredException;
+import org.example.demoproductservice.common.exception.AtLeastOneProductRegisteredToCategory;
 import org.example.demoproductservice.common.exception.ProductNotFoundException;
 import org.example.demoproductservice.domain.repository.BrandRepositoryStub;
 import org.example.demoproductservice.domain.repository.CategoryRepositoryStub;
@@ -52,7 +53,7 @@ class ProductFacadeTest {
     @Mock
     BrandService brandService;
 
-    @DisplayName("카테고리별 최저가격 상품으로 구성된 코디 정보를 조회한다")
+    @DisplayName("카테고리별 최저가격 상품으로 구성된 코디 정보(각 상품의 브랜드와 가격, 코디 상품 총액) 조회")
     @Nested
     class GetLowestPriceProductSet {
         @DisplayName("각 카테고리에서 가격이 가장 낮은 상품의 브랜드와 가격, 코디 상품 총액을 반환하는지 검증한다")
@@ -138,10 +139,10 @@ class ProductFacadeTest {
     }
 
 
-    @DisplayName("단일 브랜드로 전체 카테고리 상품을 구매할 경우, 상품 가격 총액이 가장 낮은 코디 정보를 조회한다")
+    @DisplayName("단일 브랜드로 전체 카테고리 상품을 구매할 경우, 상품 가격 총액이 가장 낮은 브랜드의 코디 정보를 조회")
     @Nested
     class GetLowestPriceBrandProductSet {
-        @DisplayName("각 브랜드의 카테고리별 상품 가격 총액이 가장 낮은 코디 상품을 반환하는지 검증한다")
+        @DisplayName("브랜드의 카테고리별 상품 가격 총액이 가장 낮은 브랜드의 코디 상품을 반환하는지 검증한다")
         @Test
         void test1() {
             // given
@@ -247,7 +248,7 @@ class ProductFacadeTest {
         }
     }
 
-    @DisplayName("카테고리별 최저, 최고 가격 상품 정보를 조회한다")
+    @DisplayName("카테고리별 최저, 최고 가격 상품 정보(카테고리, 브랜드, 상품 가격) 조회")
     @Nested
     class GetLowestAndHighestPriceProductByCategory {
         @DisplayName("카테고리에서 가격이 가장 낮은 상품과 높은 상품의 브랜드와 가격을 반환하는지 검증한다")
@@ -277,6 +278,23 @@ class ProductFacadeTest {
             assertEquals(11400L, result.highestPriceProduct().price());
             assertEquals("C", result.lowestPriceProduct().brandName());
             assertEquals(10000L, result.lowestPriceProduct().price());
+        }
+
+        @DisplayName("해당 카테고리에 등록된 상품이 없어서 상품 서비스 레이어에서 발생한 에러가 전파되는지 검증한다")
+        @Test
+        void test2() {
+            // given
+            // 테스트 데이터 세팅
+            brandRepository.prepareTestData();
+            categoryRepository.prepareTestData();
+
+            String categoryType = "TOP";
+            Category category = categoryRepository.findByCategoryType(Category.CategoryType.valueOf(categoryType));
+            given(categoryService.findByCategoryType(category.getCategoryType().name())).willReturn(category);
+            given(productService.findLowestPriceProductByCategory(category)).willThrow(AtLeastOneProductRegisteredToCategory.class);
+
+            // when & then
+            assertThrows(AtLeastOneProductRegisteredToCategory.class, () -> sut.getLowestAndHighestPriceProductByCategory(categoryType));
         }
     }
 }

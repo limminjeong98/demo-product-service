@@ -3,18 +3,18 @@ package org.example.demoproductservice.common.controller;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.example.demoproductservice.interfaces.exception.CommonHttpException;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.util.stream.Collectors;
+import java.util.List;
 
 import static org.example.demoproductservice.interfaces.consts.ErrorCode.*;
 
@@ -29,30 +29,34 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * ex) PathVariable 변수의 타입 불일치(Long 타입 파라미터에 String 타입으로 요청한 경우), @Positive
+     * ex) PathVariable 변수 validation 실패
      */
     @ExceptionHandler(value = {ConstraintViolationException.class})
     public ResponseEntity<ApiResponse<Void>> handleConstraintViolationException(ConstraintViolationException exception) {
-        String defaultMessage = exception.getConstraintViolations().stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(""));
+        List<ConstraintViolation<?>> list = exception.getConstraintViolations().stream().toList();
+        ConstraintViolation<?> constraintViolation = list.get(list.size() - 1);
+        final String defaultMessage = constraintViolation.getMessage();
         final ApiResponse<Void> body = ApiResponse.ofErrorCodeWithMessage(INVALID_INPUT, defaultMessage);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(body);
     }
 
     /**
-     * ex) @NotBlank, @NotEmpty, @Size
+     * ex) RequestBody validation 실패
      */
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
     public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
-        String defaultMessage = exception.getBindingResult().getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining(""));
+        List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
+        FieldError fieldError = fieldErrors.get(fieldErrors.size() - 1);
+        final String defaultMessage = fieldError.getDefaultMessage();
         final ApiResponse<Void> body = ApiResponse.ofErrorCodeWithMessage(INVALID_INPUT, defaultMessage);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(body);
     }
 
     /**
-     * ex) @Min, @Max, @Digits
+     * ex) PathVariable 변수 타입 불일치, 파싱 에러 등
      */
-    @ExceptionHandler(value = {MethodArgumentTypeMismatchException.class})
-    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception) {
+    @ExceptionHandler(value = {MethodArgumentTypeMismatchException.class, IllegalArgumentException.class})
+    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentTypeMismatchException(Exception exception) {
         final ApiResponse<Void> body = ApiResponse.ofErrorCodeWithMessage(INVALID_INPUT, exception.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(body);
     }
@@ -67,7 +71,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * ex) JSON parse error
+     * ex) JSON parse error (RequestBody 필드 타입 에러 등)
      */
     @ExceptionHandler(value = {HttpMessageNotReadableException.class})
     public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {

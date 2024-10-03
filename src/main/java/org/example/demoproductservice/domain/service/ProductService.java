@@ -46,7 +46,6 @@ public class ProductService {
     }
 
     public Product register(Category category, Brand brand, Long price) {
-        // 신규 등록일 경우 id는 null
         return productRepository.save(new Product(null, category, brand, price));
     }
 

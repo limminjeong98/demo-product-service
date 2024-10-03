@@ -10,6 +10,5 @@ import org.springframework.stereotype.Repository;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Product findTopByCategoryOrderByPriceAsc(Category category);
     Product findTopByCategoryOrderByPriceDesc(Category category);
-
     Product findTopByBrandAndCategoryOrderByPriceAsc(Brand brand, Category category);
 }
