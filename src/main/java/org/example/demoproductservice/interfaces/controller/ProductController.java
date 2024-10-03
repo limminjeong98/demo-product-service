@@ -64,7 +64,7 @@ public class ProductController {
         try {
             productSet = productFacade.getLowestAndHighestPriceProductByCategory(categoryType);
         } catch (AtLeastOneProductRegisteredToCategory e) {
-            throw new CommonHttpException(ErrorCode.AT_LEAST_ONE_PRODUCT_REGISTERED_TO_EACH_CATEGORY, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CommonHttpException(ErrorCode.AT_LEAST_ONE_PRODUCT_REGISTERED_TO_CATEGORY, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (CategoryNotFoundException e) {
             throw new CommonHttpException(ErrorCode.CATEGORY_NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
         }
