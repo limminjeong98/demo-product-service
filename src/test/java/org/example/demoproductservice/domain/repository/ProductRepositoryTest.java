@@ -1,5 +1,6 @@
 package org.example.demoproductservice.domain.repository;
 
+import org.example.demoproductservice.config.JpaConfig;
 import org.example.demoproductservice.domain.repository.entity.Brand;
 import org.example.demoproductservice.domain.repository.entity.Category;
 import org.example.demoproductservice.domain.repository.entity.Product;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
@@ -16,6 +18,7 @@ import java.util.Optional;
 import static org.example.demoproductservice.domain.repository.entity.Category.CategoryType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+@Import(JpaConfig.class)
 @ActiveProfiles("local")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
