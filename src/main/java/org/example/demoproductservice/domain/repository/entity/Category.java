@@ -65,6 +65,14 @@ public class Category {
         return this.products;
     }
 
+    public ZonedDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public ZonedDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
     public enum CategoryType {
         TOP("상의"),
         OUTER("아우터"),

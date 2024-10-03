@@ -66,4 +66,12 @@ public class Product {
     public Long getPrice() {
         return price;
     }
+
+    public ZonedDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public ZonedDateTime getUpdatedAt() {
+        return updatedAt;
+    }
 }

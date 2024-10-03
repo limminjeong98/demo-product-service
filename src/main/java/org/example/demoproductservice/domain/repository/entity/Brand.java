@@ -63,4 +63,12 @@ public class Brand {
     public List<Product> getProducts() {
         return products;
     }
+
+    public ZonedDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public ZonedDateTime getUpdatedAt() {
+        return updatedAt;
+    }
 }
