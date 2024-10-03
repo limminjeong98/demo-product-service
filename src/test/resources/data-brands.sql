@@ -1,0 +1,9 @@
+INSERT INTO brands(id, brand_name, created_at, updated_at) values(1, 'A', current_timestamp, current_timestamp);
+INSERT INTO brands(id, brand_name, created_at, updated_at) values(2, 'B', current_timestamp, current_timestamp);
+INSERT INTO brands(id, brand_name, created_at, updated_at) values(3, 'C', current_timestamp, current_timestamp);
+INSERT INTO brands(id, brand_name, created_at, updated_at) values(4, 'D', current_timestamp, current_timestamp);
+INSERT INTO brands(id, brand_name, created_at, updated_at) values(5, 'E', current_timestamp, current_timestamp);
+INSERT INTO brands(id, brand_name, created_at, updated_at) values(6, 'F', current_timestamp, current_timestamp);
+INSERT INTO brands(id, brand_name, created_at, updated_at) values(7, 'G', current_timestamp, current_timestamp);
+INSERT INTO brands(id, brand_name, created_at, updated_at) values(8, 'H', current_timestamp, current_timestamp);
+INSERT INTO brands(id, brand_name, created_at, updated_at) values(9, 'I', current_timestamp, current_timestamp);
