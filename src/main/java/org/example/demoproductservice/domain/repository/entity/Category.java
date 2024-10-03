@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-// FIXME: INDEX 추가
-@Table(name = "categories")
+@Table(
+        name = "categories",
+        indexes = @Index(name = "idx_categories_type", columnList = "id, category_type")
+)
 @Entity
 public class Category {
     @Id

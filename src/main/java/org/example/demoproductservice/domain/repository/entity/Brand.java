@@ -5,8 +5,10 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// FIXME: INDEX 추가
-@Table(name = "brands")
+@Table(
+        name = "brands",
+        indexes = @Index(name = "idx_brands_name", columnList = "id, brand_name")
+)
 @Entity
 public class Brand {
     @Id
