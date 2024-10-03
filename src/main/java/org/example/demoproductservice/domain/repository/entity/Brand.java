@@ -1,10 +1,15 @@
 package org.example.demoproductservice.domain.repository.entity;
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@EntityListeners(AuditingEntityListener.class)
 @Table(
         name = "brands",
         indexes = @Index(name = "idx_brands_name", columnList = "id, brand_name")
@@ -20,6 +25,14 @@ public class Brand {
 
     @OneToMany(mappedBy = "brand", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Product> products = new ArrayList<>();
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    @CreatedDate
+    private ZonedDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false)
+    @LastModifiedDate
+    private ZonedDateTime updatedAt;
 
     public Brand() {
     }

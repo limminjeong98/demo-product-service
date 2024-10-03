@@ -1,7 +1,13 @@
 package org.example.demoproductservice.domain.repository.entity;
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.ZonedDateTime;
+
+@EntityListeners(AuditingEntityListener.class)
 @Table(
         name = "products",
         indexes = @Index(name = "idx_products_detail", columnList = "id, category_id, brand_id, price")
@@ -22,6 +28,14 @@ public class Product {
 
     @Column(nullable = false)
     private Long price;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    @CreatedDate
+    private ZonedDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false)
+    @LastModifiedDate
+    private ZonedDateTime updatedAt;
 
     public Product(Long id, Category category, Brand brand, Long price) {
         this.id = id;
