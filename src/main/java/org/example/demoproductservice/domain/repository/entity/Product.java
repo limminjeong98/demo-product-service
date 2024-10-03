@@ -2,19 +2,21 @@ package org.example.demoproductservice.domain.repository.entity;
 
 import jakarta.persistence.*;
 
-// FIXME: INDEX 추가
-@Table(name = "products")
+@Table(
+        name = "products",
+        indexes = @Index(name = "idx_products_detail", columnList = "id, category_id, brand_id, price")
+)
 @Entity
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", nullable = false)
     @ManyToOne(fetch = FetchType.EAGER)
     private Category category;
 
-    @JoinColumn(name = "brand_id")
+    @JoinColumn(name = "brand_id", nullable = false)
     @ManyToOne(fetch = FetchType.EAGER)
     private Brand brand;
 
