@@ -1,7 +1,7 @@
 package org.example.demoproductservice.interfaces.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import org.example.demoproductservice.common.controller.ApiResponse;
@@ -37,7 +37,7 @@ public class BrandController {
     public ApiResponse<BrandResponse> getBrand(
             @PathVariable("brandId") @NotNull(message = "brandId는 필수 값입니다.")
             @Min(value = 1, message = "brandId는 0보다 큰 정수입니다.")
-            @Digits(integer = 10, fraction = 0, message = "brandId는 0보다 큰 정수입니다.") Long brandId
+            @Max(value = 1_000_000_000, message = "brandId는 1 이상 1,000,000,000 이하의 정수입니다.") Long brandId
     ) {
         Brand brand;
         try {
@@ -52,7 +52,7 @@ public class BrandController {
     public ApiResponse<BrandResponse> updateBrand(
             @PathVariable("brandId") @NotNull(message = "brandId는 필수 값입니다.")
             @Min(value = 1, message = "brandId는 0보다 큰 정수입니다.")
-            @Digits(integer = 10, fraction = 0, message = "brandId는 0보다 큰 정수입니다.") Long brandId,
+            @Max(value = 1_000_000_000, message = "brandId는 1 이상 1,000,000,000 이하의 정수입니다.") Long brandId,
             @Valid @RequestBody UpdateBrandRequest request
     ) {
         Brand brand;
@@ -68,7 +68,7 @@ public class BrandController {
     public ApiResponse<Void> deleteBrand(
             @PathVariable("brandId") @NotNull(message = "brandId는 필수 값입니다.")
             @Min(value = 1, message = "brandId는 0보다 큰 정수입니다.")
-            @Digits(integer = 10, fraction = 0, message = "brandId는 0보다 큰 정수입니다.") Long brandId
+            @Max(value = 1_000_000_000, message = "brandId는 1 이상 1,000,000,000 이하의 정수입니다.") Long brandId
     ) {
         try {
             brandService.delete(brandId);
